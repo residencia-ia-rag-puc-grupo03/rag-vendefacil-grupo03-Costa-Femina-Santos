@@ -88,6 +88,11 @@ Regras obrigatórias:
   (ex.: nome de responsável, cabeçalho com nome/cargo/contato), inclua essas linhas na citação
   e mencione essa informação na resposta, mesmo que a frase central da resposta esteja mais à
   frente no chunk.
+- Quando a pergunta pede para ENUMERAR um conjunto de entidades ("quais são os produtos",
+  "quais planos existem", "quais módulos..."), responda com CADA item acompanhado de uma
+  breve descrição tirada do contexto (o que o item é / para que serve) - não responda só
+  com a lista de nomes ou códigos. Ex.: "VendeFácil Estoque (módulo de controle de
+  inventário, curva ABC e alertas de ruptura)", não "VendeFácil Estoque (PROD-ESTOQUE)".
 """
 
 
@@ -168,8 +173,21 @@ def retrieve(question: str, vectorstore, analyzer: QueryAnalyzer,
             # OU o resultado filtrado já veio abaixo do k pedido.
             if filters.get("doc_type") or len(docs) < k:
                 distinct_types = _count_distinct_content_types_mentioned(question)
-                extra_cap = k + 10 if distinct_types >= 2 else k + 3
-                fused_extra = hybrid_retriever.hybrid_search(question, k=k + 5)
+                # Correção (Etapa 4 - item 25): quando a pergunta cita 2+ tipos
+                # de documento (Q08: "e-mails, tickets e reuniões"), a fonte que
+                # fecha a resposta costuma estar FUNDO no ranking híbrido cru -
+                # a ata específica da Q08 (`2026-01-product_roadmap`) fica no
+                # rank ~14, atrás de atas genéricas sobre "supermercado"/"MRR".
+                # O pool antigo (k+5=13) e o teto (k+10=18) não a alcançavam.
+                # Ampliamos os dois SÓ nesse caso; perguntas de fonte única não
+                # mudam. (A 4ª fonte da Q08, `sales_enterprise_feedback` no rank
+                # ~29, ainda exige um 2º hop dirigido - ver RELATORIO.md.)
+                if distinct_types >= 2:
+                    extra_cap = k + 14
+                    fused_extra = hybrid_retriever.hybrid_search(question, k=k + 16)
+                else:
+                    extra_cap = k + 3
+                    fused_extra = hybrid_retriever.hybrid_search(question, k=k + 5)
                 seen_ids = {d.metadata.get("chunk_id") for d in docs}
                 for extra_doc, _score in fused_extra:
                     if len(docs) >= extra_cap:
