@@ -127,6 +127,84 @@ def has_only_restricted_docs(docs) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# Terceira camada de defesa: por CONTEÚDO do chunk, não por intenção da
+# pergunta nem por "tudo restrito".
+#
+# Achado real rodando o benchmark (Q08 - RELATORIO.md): a pergunta era sobre
+# falha de sincronização de estoque, sem nenhuma palavra sensível, e por isso
+# passou direto pelas duas camadas acima (classify_question não achou nada
+# pra recusar, has_only_restricted_docs não disparou porque só 2 dos 5 chunks
+# recuperados eram "restrito"). Mas um dos chunks "restrito" que entrou junto
+# (via complemento de busca multi-fonte) era um e-mail com senha de admin e
+# credencial de banco em texto puro, do MESMO cliente da pergunta - só que de
+# um assunto totalmente diferente - e essas credenciais reais vazaram na
+# resposta final.
+#
+# A correção: reaproveita os mesmos padrões de REFUSE_PATTERNS ligados a
+# credenciais/segredos, mas aplicados ao TEXTO DO CHUNK recuperado, não à
+# pergunta. Um chunk "restrito" que também bate com um desses padrões é
+# descartado do contexto ANTES da síntese, independente do que a pergunta
+# pediu - defesa em profundidade, não confia só na intenção do usuário.
+# ---------------------------------------------------------------------------
+_CREDENTIAL_CONTENT_PATTERNS = [
+    r"\bsenha\b",
+    r"\bsenhas\b",
+    r"\btoken\b",
+    r"credencia",
+    r"\bchave\b.{0,40}\bapi\b",
+    r"\bapi\b.{0,40}\bchave\b",
+    r"\bapi key\b",
+    r"\bsegredo",
+    r"\bjwt\b",
+    r"\bpostgres\b",
+]
+_CREDENTIAL_CONTENT_RE = [re.compile(p) for p in _CREDENTIAL_CONTENT_PATTERNS]
+
+# Só faz sentido procurar credencial "colada em texto puro" em doc_types que
+# são comunicação livre entre pessoas - um e-mail, um log de servidor, um
+# ticket de suporte. Uma POLÍTICA de segurança (seguranca_lgpd.pdf), um
+# MANUAL ou uma ATA *falam de* senha/chave de API/token como assunto, sem
+# conter nenhuma credencial real - aplicar o filtro nelas é falso positivo e
+# derruba a fonte legítima (regressão real observada na Q17, que precisa
+# justamente do seguranca_lgpd.pdf). Restringir o filtro a estes tipos
+# mantém a defesa exatamente onde o vazamento acontece (Q08 = e-mail).
+_CREDENTIAL_LEAK_DOC_TYPES = {"email", "log", "ticket"}
+
+
+def contains_credential_like_content(text: str) -> bool:
+    """Detecta se o CONTEÚDO de um chunk (não a pergunta) parece conter uma
+    credencial/segredo em texto puro (senha, chave de API, token, string de
+    conexão de banco). Ver `filter_out_leaked_restricted_docs` abaixo."""
+    if not text:
+        return False
+    normalized = _normalize(text)
+    return any(pattern.search(normalized) for pattern in _CREDENTIAL_CONTENT_RE)
+
+
+def filter_out_leaked_restricted_docs(docs):
+    """
+    Remove do contexto qualquer chunk `sensitivity="restrito"` de um doc_type
+    de comunicação livre (e-mail/log/ticket) cujo conteúdo pareça conter uma
+    credencial/segredo real, mantendo os demais (inclusive outros chunks
+    "restrito" sem credencial, como um e-mail pessoal comum, e políticas de
+    segurança que apenas *mencionam* senha/chave como assunto).
+
+    Não recusa a pergunta inteira (`has_only_restricted_docs` já cobre o caso
+    "só tem chunk restrito") - só impede que ESSE chunk específico chegue à
+    síntese, porque o risco (vazar senha/chave real) independe de a pergunta
+    ter pedido isso ou não.
+    """
+    return [
+        doc for doc in docs
+        if not (
+            doc.metadata.get("sensitivity") == "restrito"
+            and doc.metadata.get("doc_type") in _CREDENTIAL_LEAK_DOC_TYPES
+            and contains_credential_like_content(doc.page_content)
+        )
+    ]
+
+
+# ---------------------------------------------------------------------------
 # Mascaramento de PII no texto (resposta final e/ou trechos citados).
 # ---------------------------------------------------------------------------
 

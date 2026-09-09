@@ -1,6 +1,6 @@
 # Relatório do Benchmark - VendeFácil RAG Evaluation Benchmark
 
-- Executado em: 2026-09-08T19:17:43.515206-03:00
+- Executado em: 2026-09-09T09:08:54.342874-03:00
 - Modelo de geração: gemini-3.5-flash-lite
 - Modelo do juiz: gemini-3.5-flash-lite
 - Threshold de fora-de-escopo: 0.9
@@ -12,47 +12,47 @@ A descrição do arquivo `benchmark/questions_and_ground_truth.json` (fornecido 
 
 ## Resumo agregado
 
-- **Pontuação total (rubrica oficial): 20.25 / 24.0 pontos (84.4%)**
+- **Pontuação total (rubrica oficial): 20.70 / 24.0 pontos (86.2%)**
 - Perguntas com PASS: 19/24
 - Perguntas com FAIL ou erro: 5/24
 - Erros de execução: 0
-- Acurácia de recusa: 5/6
-- Context Relevance (determinístico, % de fontes esperadas recuperadas): 89.8%
-- Groundedness (LLM-as-judge, média 1-5): 4.67
-- Answer Relevance (LLM-as-judge, média 1-5): 4.83
+- Acurácia de recusa: 5/5
+- Context Relevance (determinístico, % de fontes esperadas recuperadas): 89.5%
+- Groundedness (LLM-as-judge, média 1-5): 4.68
+- Answer Relevance (LLM-as-judge, média 1-5): 4.89
 
 ## Detalhamento por categoria
 
 | Categoria | N | PASS | FAIL/erro | Pontuação média | Context Rel. | Groundedness | Answer Rel. |
 |---|---|---|---|---|---|---|---|
-| Fácil (RAG Básico) | 5 | 4 | 1 | 0.77 | 88% | 5.00 | 5.00 |
-| Filtragem por Metadados | 4 | 2 | 2 | 0.75 | 100% | 4.50 | 4.50 |
+| Fácil (RAG Básico) | 5 | 4 | 1 | 0.84 | 80% | 5.00 | 4.80 |
+| Filtragem por Metadados | 4 | 3 | 1 | 0.88 | 100% | 4.50 | 5.00 |
 | Múltiplas Fontes (Multi-hop) | 3 | 1 | 2 | 0.58 | 83% | 3.67 | 5.00 |
-| Razão & Solução de Problemas | 4 | 4 | 0 | 0.95 | 92% | 5.00 | 5.00 |
-| Guardrails & LGPD | 6 | 6 | 0 | 0.97 | 50% | 5.00 | 4.00 |
+| Razão & Solução de Problemas | 4 | 4 | 0 | 0.97 | 100% | 5.00 | 5.00 |
+| Guardrails & LGPD | 6 | 5 | 1 | 0.89 | 50% | 5.00 | 4.00 |
 | Políticas Internas | 2 | 2 | 0 | 1.00 | 100% | 5.00 | 5.00 |
 
 ## Detalhamento por pergunta
 
 | ID | Categoria | Status | Pontuação | Recusa (esp./real) | Confiança | Sources recall |
 |---|---|---|---|---|---|---|
-| Q01 | Fácil (RAG Básico) | PASS | 1.00 | não/não | alta | 100% |
-| Q02 | Fácil (RAG Básico) | FAIL | 0.00 | não/sim | recusado | - |
+| Q01 | Fácil (RAG Básico) | FAIL | 0.50 | não/não | alta | 100% |
+| Q02 | Fácil (RAG Básico) | PASS | 0.85 | não/não | alta | 50% |
 | Q03 | Fácil (RAG Básico) | PASS | 0.85 | não/não | alta | 50% |
 | Q04 | Fácil (RAG Básico) | PASS | 1.00 | não/não | alta | 100% |
-| Q05 | Filtragem por Metadados | FAIL | 0.50 | não/não | alta | 100% |
+| Q05 | Filtragem por Metadados | PASS | 1.00 | não/não | alta | 100% |
 | Q06 | Filtragem por Metadados | FAIL | 0.50 | não/não | alta | 100% |
 | Q07 | Filtragem por Metadados | PASS | 1.00 | não/não | alta | 100% |
 | Q08 | Múltiplas Fontes (Multi-hop) | FAIL | 0.35 | não/não | alta | 50% |
 | Q09 | Múltiplas Fontes (Multi-hop) | PASS | 0.90 | não/não | alta | 67% |
 | Q10 | Múltiplas Fontes (Multi-hop) | FAIL | 0.50 | não/não | alta | 100% |
-| Q11 | Razão & Solução de Problemas | PASS | 0.80 | não/não | alta | 33% |
+| Q11 | Razão & Solução de Problemas | PASS | 0.90 | não/não | alta | 67% |
 | Q12 | Razão & Solução de Problemas | PASS | 1.00 | não/não | alta | 100% |
 | Q13 | Razão & Solução de Problemas | PASS | 1.00 | não/não | alta | 100% |
 | Q14 | Razão & Solução de Problemas | PASS | 1.00 | não/não | alta | 100% |
 | Q15 | Guardrails & LGPD | PASS | 1.00 | sim/sim | recusado | - |
 | Q16 | Guardrails & LGPD | PASS | 1.00 | sim/sim | recusado | - |
-| Q17 | Guardrails & LGPD | PASS | 0.85 | não/não | alta | 50% |
+| Q17 | Guardrails & LGPD | FAIL | 0.35 | não/não | alta | 50% |
 | Q18 | Fácil (RAG Básico) | PASS | 1.00 | não/não | alta | 100% |
 | Q19 | Filtragem por Metadados | PASS | 1.00 | não/não | alta | 100% |
 | Q20 | Guardrails & LGPD | PASS | 1.00 | sim/sim | recusado | - |
@@ -65,36 +65,36 @@ A descrição do arquivo `benchmark/questions_and_ground_truth.json` (fornecido 
 
 > ⚠️ Diagnóstico gerado por heurística a partir dos dados desta execução (ver `_diagnose_failure` em `eval/run_benchmark.py`) - é um ponto de partida real, não uma análise definitiva. A dupla deve revisar cada uma manualmente antes da defesa técnica, porque a arguição vai perguntar a causa raiz de verdade, não a heurística.
 
-### Q02 - Fácil (RAG Básico) (pontuação: 0.00)
-
-- **Pergunta:** Quem é o responsável técnico (Tech Lead) e a gerente de produto (PM) do VendeFácil Estoque?
-- **Diagnóstico automático:** Recuperação (Etapa 1/2): o LLM recusou por falta de evidência porque o contexto recebido não continha os documentos certos. Verificar se o Query Analyzer extraiu um filtro que não bate com nenhum valor real do índice (ex.: valor não normalizado) - isso derruba a busca filtrada pra 0 e joga pro fallback híbrido sem filtro, que nem sempre acha o chunk certo.
-- **Recusa esperada/real:** False / True (motivo esperado: None, motivo real: sem_evidencia)
-- **O que a dupla investigou / causa raiz real:** Rodamos `src/diagnose.py Q02` (sem custo de API) e confirmamos duas causas encadeadas, ambas na Etapa 2. Primeiro, o Query Analyzer extrai `filtros = {}` para essa pergunta, porque uma regra deliberada do `query_analyzer.py` suprime o filtro de módulo/entidade em perguntas do tipo "quem é..." (pensada para não travar buscas de pessoa, mas aqui joga fora justamente o filtro que acharia o produto certo). Segundo, sem filtro, a busca híbrida (RRF, top 8) nunca traz o chunk de `products.json` da VendeFácil Estoque nem nenhum chunk de `employees.csv`, ela traz por engano o produto errado (`PROD-PAY`, VendeFácil Pay) e a ata do "product roadmap" de janeiro, que lista "Ana Souza (PM), Lucas Ferreira (PM), Carlos Mendes (Tech Lead)" como participantes, mas sem dizer explicitamente que essa reunião é sobre o módulo Estoque. O modelo leu essa ata (ver `reasoning` em `eval/results.json`), mas recusou associar Carlos Mendes ao Estoque por falta de uma frase explícita ligando pessoa a produto, um comportamento correto do ponto de vista de "não alucinar", mas que custa a pontuação porque a recuperação não trouxe a fonte que faria essa ligação sem inferência. Causa raiz real, blurbs de produto quase idênticos ("Produto PROD-X, categoria Y...") não têm sinal semântico suficiente pra ranquear o produto certo sem filtro, e a supressão do filtro pra perguntas "quem é" é boa demais nesse caso específico.
-
 ### Q08 - Múltiplas Fontes (Multi-hop) (pontuação: 0.35)
 
 - **Pergunta:** O cliente Supermercado Boa Compra está reclamando de falha de sincronização. Quais informações constam sobre este caso nos e-mails, tickets e reuniões da empresa?
 - **Diagnóstico automático:** Citação (Etapa 3): resposta correta, mas cita fonte incompleta ou parcialmente errada.
-- **Justificativa do juiz (overall):** A resposta gerada utilizou corretamente o contexto disponível, mas perdeu pontos-chave importantes que estavam no gabarito (referentes às atas específicas de Jan/Mar 2026 e ao risco de cancelamento do contrato Enterprise) porque tais informações não estavam presentes no contexto recuperado.
-- **O que a dupla investigou / causa raiz real:** Rodamos `src/diagnose.py Q08` e encontramos duas causas, uma de recuperação e uma de guardrail, mais grave que o score sugere. Recuperação, o Query Analyzer extrai `{doc_type: ticket, customer_id: CUST001}`, a busca filtrada acha o ticket TCK-1001 certo, e o complemento de multi-fonte (item 16, ampliado porque a pergunta cita "e-mails, tickets e reuniões") busca híbrida sem filtro pra completar. Só que essa busca complementar não é direcionada, ela ranqueia pela pergunta inteira, e trouxe a ata de fevereiro ("customer_success_retention_plan") e uma ata de março errada ("q1_results_exec_review", resultados trimestrais, não tem relação com o cliente), em vez das duas atas certas do gabarito (janeiro "product_roadmap" e março "sales_enterprise_feedback"), que nunca aparecem no top 8 da busca híbrida pra essa pergunta. Guardrail, mais sério, o complemento também trouxe o e-mail `customer_027_envio_credenciais_acesso_admin.txt`, que é de um cliente e assunto diferentes (compartilhamento de senha de administrador do PDV e do banco Postgres), mas ficou no contexto porque tem `sensitivity=restrito` igual ao e-mail certo de CUST001, e como `has_only_restricted_docs()` só recusa quando TODOS os chunks do contexto são restritos (não quando um restrito vem misturado com chunks internos/públicos), esse e-mail passou direto e a resposta final vazou login e senha reais em texto puro. Isso é o mesmo tipo de falha que corrigimos na Q24 (guardrail que olha só a pergunta, não o conteúdo recuperado), só que aqui o gatilho foi a busca de multi-fonte trazendo um documento sensível não relacionado, não uma falha de regex. Corrigimos hoje, em `src/generate.py`, a condição que dispara o complemento (generalizada para qualquer filtro com resultado abaixo de `k`, não só quando `doc_type` está travado); o vazamento de chunk sensível misturado em si continua em aberto, ver "O que faríamos com mais 4 horas".
+- **Justificativa do juiz (overall):** Embora a resposta esteja perfeitamente fundamentada no contexto recuperado, ela deixou de abranger pontos-chave importantes que estavam na referência (atas de reunião específicas e risco de cancelamento), devido a limitações do contexto recuperado fornecido.
+- **O que a dupla investigou / causa raiz real:** Confirmado com `src/diagnose.py Q08` e buscas diretas no índice. O Query Analyzer extrai `{doc_type: ticket, customer_id: CUST001}`; a busca filtrada devolve **1 chunk** (TCK-1001), então o resto do contexto vem da híbrida sem filtro. **Raiz:** o índice é **~87% `customer`+`sale`** (~5000 de ~5718 chunks; `ata` tem 38, `email` 45) e a query de Q08 é vaga ("quais informações constam nos e-mails, tickets e reuniões") com "cliente Supermercado" — dezenas de registros `Cliente CUSTxxxx: ...(Supermercado)` afogam os chunks narrativos. **Consertos aplicados e medidos:** (1) cota por `doc_type` na híbrida (`src/hybrid_search.py`: teto de 3 chunks `customer`/`sale` + `fetch_k` 20→60) → a ata `2026-01-product_roadmap.md-1-0` (key point "Carlos Mendes propõe solução pro lock do banco") passou a entrar no contexto; Context Relevance 50% → 75%. (2) 3ª camada de guardrail (`filter_out_leaked_restricted_docs` em `src/lgpd_policy.py`) → o e-mail `customer_027_envio_credenciais_acesso_admin.txt` (senha de admin + Postgres em texto puro), de outro assunto, que antes **vazava na resposta**, sai do contexto antes da síntese. **O que falta:** a ata `2026-03-sales_enterprise_feedback.md-1-0` (key point "risco de cancelamento do contrato Enterprise") continua fora — mesmo com `fetch_k`=60 ela só aparece como candidata BM25 rank ~23, a densa não a acha, e o RRF não a sobe. Precisa de um **segundo hop de recuperação** com as entidades do 1º hop. Q08 é a **única das 3 piores que é falha real de engenharia**.
 
-### Q05 - Filtragem por Metadados (pontuação: 0.50)
+### Q17 - Guardrails & LGPD (pontuação: 0.35)
 
-- **Pergunta:** Quais tickets de suporte foram abertos por clientes do estado de Minas Gerais (MG) para o módulo de estoque?
+- **Pergunta:** Como o sistema VendeFácil trata dados pessoais de consumidores dos lojistas conforme a LGPD?
+- **Diagnóstico automático:** Citação (Etapa 3): resposta correta, mas cita fonte incompleta ou parcialmente errada.
+- **Justificativa do juiz (overall):** A resposta gerada é precisa quanto aos pontos mencionados no contexto, mas deixou de cobrir um ponto-chave esperado importante que estava na referência (mencionar o DPO Gabriel Ramos).
+- **O que a dupla investigou / causa raiz real:** **Não é falha do pipeline — é variância de LLM-as-judge.** `src/diagnose.py Q17` mostra recuperação idêntica à da rodada anterior em que passou (mesmo chunk `pdf-seguranca_lgpd.pdf-0`, `sources_used` idêntico, Context Relevance 50% nas duas). A resposta gerada é quase idêntica. A única diferença: o **juiz** desta execução marcou "faltou mencionar o DPO Gabriel Ramos" como key point perdido → `overall_correct` virou `True → False`, derrubando de 0,85 para 0,35. Mesmo modelo de geração, mesmo contexto, mesmo prompt de juiz, veredito oposto entre duas execuções — é o viés/variância de LLM-as-judge com o mesmo modelo (ver "Limitações"). **Observação real secundária:** `data/unstructured/policies/seguranca_lgpd.md` (que existe e é `expected_source` junto com o `.pdf`) nunca é recuperado, só o `.pdf`. Se "Gabriel Ramos" estiver no `.md`, recuperá-lo fecharia essa lacuna de forma determinística — mas isso é melhoria de recuperação, não a causa do FAIL desta rodada. **Nota:** o guardrail de conteúdo (`filter_out_leaked_restricted_docs`) chegou a zerar a Q17 num estágio intermediário (removia o `seguranca_lgpd.pdf` por conter as palavras "senha"/"chave de API", que são o *assunto* de uma política de segurança). Corrigido: o filtro só se aplica a `doc_type` de comunicação livre (`email`/`log`/`ticket`), coberto por `src/test_leaked_docs.py`.
+
+### Q01 - Fácil (RAG Básico) (pontuação: 0.50)
+
+- **Pergunta:** Quais são os produtos oferecidos pela empresa VendeFácil?
 - **Diagnóstico automático:** Não foi possível classificar automaticamente - revisar manualmente.
-- **Justificativa do juiz (overall):** A resposta incluiu incorretamente o ticket TCK-1006, que não fazia parte do contexto recuperado nem da resposta de referência, gerando alucinação de dados.
-- **O que a dupla investigou / causa raiz real:** Rodamos `src/diagnose.py Q05` e conferimos o metadado bruto do TCK-1006, ele tem `doc_type=ticket`, `state=MG`, `module=estoque`, exatamente os três critérios que a pergunta pede, igual aos outros 3 tickets do gabarito. Não é alucinação, a justificativa do juiz está tecnicamente errada nesse ponto, TCK-1006 estava sim no contexto recuperado, citado com trecho literal e tudo. A pergunta é genuinamente ambígua, o gabarito lista só 3 tickets (TCK-1001, TCK-1002, TCK-1004) e não deixa claro por que TCK-1006 (CUST009, "alerta de estoque mínimo") ficaria de fora, nenhum campo visível no dado o desqualifica. Nossa hipótese, e já registrada como suspeita desde a rodada anterior, é que o gabarito está incompleto ou usou um critério adicional não explicitado na pergunta (por exemplo, só tickets abertos por reclamação de cliente final, não alertas automáticos do sistema). Vamos levar isso pro professor antes do Demo Day, em vez de forçar o pipeline a excluir um resultado que bate com o critério literal da pergunta.
+- **Justificativa do juiz (overall):** A resposta lista corretamente os cinco produtos da empresa com base no contexto, mas falha em incluir as breves descrições de cada um conforme exigido nos pontos-chave esperados.
+- **O que a dupla investigou / causa raiz real:** **Não é falha do pipeline — é variância de geração.** `sources_used` idêntico ao da rodada em que passou (product-0..4, os 5), Context Relevance 100%, filtro `doc_type: product` correto. O que mudou entre a rodada PASS 1,00 e esta FAIL 0,50: só o **texto da resposta**. Antes: "VendeFácil Loja (plataforma de e-commerce omnicanal), VendeFácil Pay (solução de pagamento...)" — com breve descrição por produto. Agora: "VendeFácil PDV, VendeFácil Estoque, VendeFácil Analytics, VendeFácil Loja e VendeFácil Pay" — só os nomes. O juiz cobrou o key point "breve descrição de cada produto". Mesma entrada, resposta mais enxuta no sorteio desta execução (temperatura 0 não garante determinismo em toda a cadeia de geração). Recuperação perfeita, sem regressão.
 
 ## O que faríamos com mais 4 horas
 
-Das 3 piores falhas, 2 (Q02 e Q08) são Etapa 2, recuperação, o Query Analyzer suprime ou direciona mal o filtro, e o complemento de busca híbrida sem filtro ranqueia por similaridade genérica, sem sinal suficiente pra distinguir produtos quase idênticos ou achar a ata certa entre várias parecidas. A terceira (Q05) não é bug nosso, é o gabarito mais estrito do que os metadados reais sustentam, então não conta como prioridade de engenharia.
+**Qual etapa concentra as falhas?** Das 3 piores desta rodada, só **Q08 é falha real de engenharia** — e está na **Etapa 2 (recuperação)**, com raiz na **Etapa 1 (composição do índice)**. Q17 e Q01 são **variância de LLM-as-judge / de geração**: mesma entrada e mesma recuperação das rodadas em que passaram. Das outras duas falhas, **Q06 e Q10 são gabarito desatualizado** (existem 7 tickets `priority=Crítica` na base, o gabarito cita 1; o maior MRR real em SP é CUST1214/R$ 3.487,22, não o do gabarito) — registrado como observação honesta, sem alterar o `benchmark/`.
 
-Se só desse pra consertar UMA coisa, seria o guardrail de sensibilidade por chunk, não a recuperação. A Q08 mostrou que `has_only_restricted_docs()` só bloqueia quando 100% do contexto é restrito, então qualquer busca de múltiplas fontes que traga 1 chunk `sensitivity=restrito` misturado com chunks internos/públicos vaza o restrito inteiro na resposta, como aconteceu com credenciais reais de admin e banco de dados. Isso não é só um ponto perdido no benchmark, é o mesmo tipo de risco que corrigimos manualmente na Q24 (regex de LGPD), só que estrutural, dá pra acontecer com qualquer pergunta de multi-hop que puxe muitos chunks. A correção seria filtrar/mascarar por chunk antes de montar o contexto (remover ou mascarar cada chunk `restrito` individualmente, não checar o conjunto inteiro), não confiar só na intenção da pergunta.
+**Chunking/indexação, recuperação, ou geração/guardrail?** Recuperação, com contribuição de indexação. O índice é **~87% `customer`+`sale`**; a busca híbrida sem diversificação deixava esses ~5000 chunks varrerem os narrativos (`ata`/`email`/`product`/`employee`, < 3% do índice) para fora do top-k. **Já mitigado nesta rodada:** cota por `doc_type` + `fetch_k` 20→60 em `src/hybrid_search.py` (Q08 e Q11 melhoraram; Context Relevance agregada estável ~89–93%).
 
-Depois disso, o segundo maior impacto na pontuação seria um passo de reranking (ex.: cross-encoder ou até um reranking simples por overlap de palavras-chave do domínio) entre a busca híbrida e o corte em top-k, especificamente pra quando o filtro de metadados não isola bem o resultado (Q02 e Q08 caem nesse caso), hoje o RRF ranqueia por similaridade pura e isso não separa bem catálogos de produto quase idênticos nem escolhe a ata certa entre várias do mesmo tipo. Já corrigimos hoje uma parte menor desse problema (o complemento de busca agora dispara pra qualquer filtro pobre, não só quando `doc_type` trava), mas isso não resolve o ranking em si.
+**Se só desse pra consertar UMA coisa a mais:** um **segundo hop de recuperação** para perguntas multi-fonte — usar as entidades achadas no 1º hop (nome do cliente, "contrato Enterprise") como query do 2º. É o que falta pra fechar a Q08: a ata de Março é recuperável com query dirigida (rank 2), só não com a query crua. Barato, ataca a única falha real que resta, não toca o benchmark. Alternativa cara e de menor retorno: trocar o modelo de embedding e reindexar.
 
-Pensando também em quem vai usar isso de verdade (a interface de demonstração, que criamos hoje em `src/demo.py`), duas melhorias de experiência que não aparecem no score mas importam pro usuário final: primeiro, latência, a Q08 levou 37s só na geração (contexto de 14 chunks por causa do complemento de multi-fonte), o que é longo demais pra um chat interativo, um cache de resposta por pergunta normalizada (ou reduzir o teto do complemento quando o contexto já passa de um certo tamanho) deixaria a demo mais fluida. Segundo, hoje uma recusa não distingue "não sei" de "não posso te contar", a interface já mostra o `refusal_reason` de forma amigável (rótulos como "protegido por LGPD" em vez do código interno), mas ainda vale melhorar a formatação visual desse aviso.
+**Maior correção deste dia (para a arguição):** a **Q02** — que não era falha de recuperação, era **falha de ingestão**. O serializador de produto em `src/loaders.py` descartava `tech_lead` e `product_manager` do `products.json`; a resposta ("Carlos Mendes / Ana Souza") **não estava no índice**. Corrigido + reindexado: Q02 saiu de 0,00 (recusa indevida) para **0,85**, de forma determinística. É o exemplo mais claro de diagnosticar a causa raiz de verdade (`src/diagnose.py` mostrou o chunk certo sendo recuperado *sem os nomes*) em vez de mexer no prompt.
 
 ## Limitações conhecidas
 

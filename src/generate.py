@@ -7,7 +7,12 @@ from pydantic import ValidationError
 
 import config
 from hybrid_search import HybridRetriever
-from lgpd_policy import classify_question, has_only_restricted_docs, mask_pii
+from lgpd_policy import (
+    classify_question,
+    has_only_restricted_docs,
+    mask_pii,
+    filter_out_leaked_restricted_docs,
+)
 from query_analyzer import QueryAnalyzer
 from query_index import load_index
 from schema import RAGResponse, SourceEvidence
@@ -173,13 +178,21 @@ def retrieve(question: str, vectorstore, analyzer: QueryAnalyzer,
                     if cid not in seen_ids:
                         docs.append(extra_doc)
                         seen_ids.add(cid)
-            return docs, filters
+            # Correção (Etapa 4 - item 22): achado real da Q08 (ver
+            # RELATORIO.md) - o complemento acima busca por similaridade da
+            # pergunta inteira, sem saber que um chunk trazido é "restrito" e
+            # tem conteúdo de credencial (senha, chave de API, token). Filtra
+            # isso ANTES de devolver o contexto, independente da pergunta ter
+            # pedido algo sensível ou não - terceira camada de defesa, por
+            # conteúdo do chunk, não só por intenção da pergunta.
+            return filter_out_leaked_restricted_docs(docs), filters
         # Combinação de filtros não bateu com nenhum chunk (ex.: campos que
         # não coexistem no mesmo documento) - cai para a busca híbrida sem
         # filtro em vez de recusar por falta de evidência.
 
     fused = hybrid_retriever.hybrid_search(question, k=k)
-    return [doc for doc, _score in fused], filters
+    docs = [doc for doc, _score in fused]
+    return filter_out_leaked_restricted_docs(docs), filters
 
 
 def is_out_of_scope(question: str, vectorstore, threshold: float = None) -> bool:

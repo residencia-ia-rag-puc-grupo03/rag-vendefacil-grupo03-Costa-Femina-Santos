@@ -149,10 +149,22 @@ def load_products_json(path: str) -> list[Document]:
     docs = []
     for i, item in enumerate(items):
         features = ", ".join(item.get("features", []))
+        # Correção (Etapa 4 - item 24): o texto serializado do produto omitia
+        # `tech_lead` e `product_manager`, que estão no JSON de origem. A Q02
+        # ("quem é o Tech Lead / PM do VendeFácil Estoque?") era irrespondível
+        # não por falha de recuperação, mas porque a resposta NÃO ESTAVA no
+        # índice - o chunk certo, mesmo recuperado, não tinha os nomes. Agora
+        # entram na frase, com o rótulo que a pergunta usa ("Tech Lead"/"PM").
+        price = item.get("standalone_monthly_price_brl")
+        price_str = (
+            f"Preço avulso: R$ {price}/mês. " if price not in (None, "") else ""
+        )
         text = (
             f"Produto {item.get('product_id', i)}: {item.get('name', '')}, "
             f"categoria {item.get('category', '')}. {item.get('description', '')} "
-            f"Preço avulso: R$ {item.get('standalone_monthly_price_brl', '')}/mês. "
+            f"Responsável técnico (Tech Lead): {item.get('tech_lead', 'não informado')}. "
+            f"Gerente de produto (PM / Product Manager): {item.get('product_manager', 'não informado')}. "
+            f"{price_str}"
             f"Funcionalidades: {features}. SLA de uptime: {item.get('sla_uptime', '')}."
         )
         meta = ChunkMetadata(
@@ -160,6 +172,10 @@ def load_products_json(path: str) -> list[Document]:
             doc_type="product",
             chunk_id=_make_id("product", i),
             sensitivity="publico",
+            # Liga o produto ao módulo canônico (ex.: "VendeFácil Estoque" ->
+            # "estoque"), pelo mesmo mapa usado em customers/stores. Assim uma
+            # pergunta sobre um módulo específico pode ancorar no produto.
+            module=normalize_module(item.get("name")),
         )
         docs.append(Document(page_content=text, metadata=meta.to_dict()))
     return docs

@@ -8,6 +8,19 @@ os scores das duas buscas (que vêm em escalas incomparáveis).
 Este módulo NÃO aplica os filtros de metadados extraídos pelo Query Analyzer -
 isso é o item 3 do enunciado (filtro na busca vetorial), que fica por conta
 de outro integrante do trio. Aqui a busca roda sobre a base inteira.
+
+Correção (Etapa 4 - item 23): diversificação por doc_type no resultado da
+fusão. O índice tem ~87% de chunks `customer` + `sale` (2000 + 3000 de
+~5718). Numa busca híbrida SEM filtro, esses registros quase-duplicados
+("Cliente CUSTxxxx: ...", "Venda ...") pontuam alto em densa E BM25 e afogam
+os chunks narrativos (`ata`, `email`, `product`, `employee` - juntos < 3% do
+índice) para fora do top-k, mesmo quando a pergunta é sobre uma reunião ou um
+e-mail (causa raiz confirmada de Q02 e Q08 - ver RELATORIO.md). Perguntas que
+realmente querem dados de cliente/venda passam pela busca FILTRADA (o Query
+Analyzer extrai `customer_id`/`state`) ou pela rota estruturada, nunca só por
+aqui - então limitar quantos chunks desses dois tipos entram no top-k da
+híbrida bruta é seguro e ataca as duas falhas de uma vez. Nada é descartado:
+o excedente vai pro fim da lista e serve de backfill.
 """
 
 import re
@@ -17,6 +30,17 @@ from collections import defaultdict
 from rank_bm25 import BM25Okapi
 
 from query_index import load_index
+
+# doc_types que dominam o índice e afogam os chunks narrativos numa busca
+# sem filtro. Só estes dois são limitados; todo o resto (ticket, ata, log...)
+# fica sem teto, porque perguntas que precisam de vários chunks de um mesmo
+# tipo (ex.: "todos os chamados Crítica" - Q06) usam a busca filtrada, não
+# esta, e ali o teto não se aplica.
+_FLOODING_DOC_TYPES = {"customer", "sale"}
+# Máximo de chunks de CADA tipo inundante que podem ocupar o resultado antes
+# do backfill. 3 é suficiente pra uma pergunta que de fato precise de um
+# punhado de clientes, sem deixar os 2000 registros varrerem o top-k.
+_FLOODING_TYPE_CAP = 3
 
 
 def _tokenize(text: str) -> list[str]:
@@ -59,12 +83,19 @@ class HybridRetriever:
         ranked_idx = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:k]
         return [self._chunk_ids_in_corpus_order[i] for i in ranked_idx]
 
-    def hybrid_search(self, query: str, k: int = 5, fetch_k: int = 20, rrf_k: int = 60):
+    def hybrid_search(self, query: str, k: int = 5, fetch_k: int = 60,
+                      rrf_k: int = 60, diversify: bool = True):
         """
         Roda as duas buscas, funde os rankings com RRF e devolve os top-k.
 
         score_RRF(doc) = soma, para cada recuperador em que o doc aparece,
         de 1 / (rrf_k + posição do doc naquele ranking)
+
+        `fetch_k` (candidatos que cada recuperador traz antes da fusão) foi de
+        20 para 60: com 20 candidatos por lado, um chunk narrativo com bom
+        casamento lexical (ex.: a ata que cita "Supermercado Boa Compra ...
+        Savassi", Q08) nem chegava a ser candidato. `diversify=True` aplica o
+        teto por doc_type descrito no cabeçalho do módulo.
         """
         dense_ids = self.dense_search(query, k=fetch_k)
         sparse_ids = self.sparse_search(query, k=fetch_k)
@@ -75,8 +106,33 @@ class HybridRetriever:
         for rank, chunk_id in enumerate(sparse_ids, start=1):
             rrf_scores[chunk_id] += 1.0 / (rrf_k + rank)
 
-        fused = sorted(rrf_scores.items(), key=lambda item: item[1], reverse=True)[:k]
+        ranked = sorted(rrf_scores.items(), key=lambda item: item[1], reverse=True)
+        if diversify:
+            ranked = self._diversify_by_doc_type(ranked)
+
+        fused = ranked[:k]
         return [(self.doc_by_id[chunk_id], score) for chunk_id, score in fused]
+
+    def _diversify_by_doc_type(self, ranked):
+        """
+        Recebe a lista JÁ fundida por RRF (em ordem decrescente de score) e
+        empurra para o fim os chunks de um `doc_type` inundante que passem do
+        teto `_FLOODING_TYPE_CAP`, deixando os chunks narrativos que vieram
+        logo abaixo subirem. Não remove nada: `mantidos + excedente` preserva
+        todos os candidatos, só muda a ordem, então o corte final em `[:k]`
+        ainda tem backfill se faltar resultado diverso.
+        """
+        kept, overflow = [], []
+        type_count = defaultdict(int)
+        for chunk_id, score in ranked:
+            doc = self.doc_by_id.get(chunk_id)
+            doc_type = doc.metadata.get("doc_type") if doc is not None else None
+            if doc_type in _FLOODING_DOC_TYPES and type_count[doc_type] >= _FLOODING_TYPE_CAP:
+                overflow.append((chunk_id, score))
+            else:
+                kept.append((chunk_id, score))
+                type_count[doc_type] += 1
+        return kept + overflow
 
 
 def _print_docs(title: str, docs) -> None:
