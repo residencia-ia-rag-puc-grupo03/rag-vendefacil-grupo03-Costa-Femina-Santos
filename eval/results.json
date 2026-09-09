@@ -2,7 +2,7 @@
   "run_metadata": {
     "benchmark_name": "VendeFácil RAG Evaluation Benchmark",
     "benchmark_version": "1.0",
-    "generated_at": "2026-09-09T09:08:54.342874-03:00",
+    "generated_at": "2026-09-09T10:57:37.821860-03:00",
     "generation_model": "gemini-3.5-flash-lite",
     "judge_model": "gemini-3.5-flash-lite",
     "out_of_scope_score_threshold": 0.9,
@@ -29,7 +29,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "A empresa VendeFácil oferece os seguintes produtos: VendeFácil Analytics (PROD-ANALYTICS), VendeFácil Pay (PROD-PAY), VendeFácil Loja (PROD-LOJA), VendeFácil Estoque (PROD-ESTOQUE) e VendeFácil PDV (PROD-PDV).",
+        "answer": "A empresa VendeFácil oferece os seguintes produtos: \n- VendeFácil Analytics (módulo de inteligência de negócios e gestão financeira, com dashboard executivo, DRE gerencial, fluxo de caixa projetado, margem de contribuição por produto e métricas de vendas por vendedor);\n- VendeFácil Pay (solução de meios de pagamento e TEF integrada ao PDV, com suporte a TEF, PIX Dinâmico com confirmação instantânea no caixa e conciliação de cartões);\n- VendeFácil Loja (plataforma de e-commerce e catálogo digital omnicanal integrada nativamente ao estoque e PDV físico, com suporte a WhatsApp Commerce e marketplaces);\n- VendeFácil Estoque (módulo de gestão de inventário e suprimentos, com controle avançado de estoque, curva ABC, inventário por coletor de dados, alertas de ruptura e sincronização em tempo real entre filiais);\n- VendeFácil PDV (sistema completo para frente de caixa com emissão rápida de NFC-e/SAT, sangria, suporte offline e controle de caixa por operador).",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -37,31 +37,31 @@
           {
             "filepath": "structured/products.json",
             "chunk_id": "product-3",
-            "quotation": "Produto PROD-ANALYTICS: VendeFácil Analytics, categoria Inteligência de Negócios e Gestão Financeira."
+            "quotation": "Produto PROD-ANALYTICS: VendeFácil Analytics, categoria Inteligência de Negócios e Gestão Financeira. Dashboard executivo com DRE gerencial, fluxo de caixa projetado, margem de contribuição por produto e métricas de vendas por vendedor."
           },
           {
             "filepath": "structured/products.json",
             "chunk_id": "product-4",
-            "quotation": "Produto PROD-PAY: VendeFácil Pay, categoria Meios de Pagamento e TEF."
+            "quotation": "Produto PROD-PAY: VendeFácil Pay, categoria Meios de Pagamento e TEF. Solução de pagamento integrada ao PDV com suporte a TEF, PIX Dinâmico com confirmação instantânea no caixa e conciliação de cartões."
           },
           {
             "filepath": "structured/products.json",
             "chunk_id": "product-2",
-            "quotation": "Produto PROD-LOJA: VendeFácil Loja, categoria E-commerce e Catálogo Digital."
+            "quotation": "Produto PROD-LOJA: VendeFácil Loja, categoria E-commerce e Catálogo Digital. Plataforma de e-commerce omnicanal integrada nativamente ao estoque e PDV físico, com suporte a WhatsApp Commerce e marketplaces."
           },
           {
             "filepath": "structured/products.json",
             "chunk_id": "product-1",
-            "quotation": "Produto PROD-ESTOQUE: VendeFácil Estoque, categoria Gestão de Inventário e Suprimentos."
+            "quotation": "Produto PROD-ESTOQUE: VendeFácil Estoque, categoria Gestão de Inventário e Suprimentos. Módulo de controle avançado de estoque, curva ABC, inventário por coletor de dados, alertas de ruptura e sincronização em tempo real entre filiais."
           },
           {
             "filepath": "structured/products.json",
             "chunk_id": "product-0",
-            "quotation": "Produto PROD-PDV: VendeFácil PDV, categoria Ponto de Venda & Frente de Caixa."
+            "quotation": "Produto PROD-PDV: VendeFácil PDV, categoria Ponto de Venda & Frente de Caixa. Sistema completo para frente de caixa com emissão rápida de NFC-e/SAT, sangria, suporte offline e controle de caixa por operador."
           }
         ],
-        "reasoning": "A resposta lista todos os cinco produtos descritos no catálogo de produtos estruturado da empresa.",
-        "latency_seconds": 4.537
+        "reasoning": "A resposta lista cada um dos produtos encontrados nos chunks de produtos (PROD-ANALYTICS, PROD-PAY, PROD-LOJA, PROD-ESTOQUE e PROD-PDV), acompanhados de suas respectivas descrições e categorias presentes no contexto.",
+        "latency_seconds": 6.743
       },
       "filters_used": {
         "doc_type": "product"
@@ -72,28 +72,27 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão totalmente sustentadas pelos chunks de produtos fornecidos no contexto.",
+          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente apoiadas pelos dados presentes no contexto recuperado.",
           "unsupported_claims": []
         },
         "answer_relevance": {
-          "score": 4,
-          "justification": "A resposta lista corretamente todos os produtos oferecidos pela empresa conforme o contexto, embora não inclua breves descrições de cada um conforme sugerido no gabarito, mas responde bem à pergunta direta."
+          "score": 5,
+          "justification": "A resposta lista todos os produtos oferecidos pela VendeFácil de forma clara e detalhada, respondendo completamente à pergunta."
         },
         "key_points_coverage": {
           "points_hit": [
-            "Mencionar os 5 produtos principais"
-          ],
-          "points_missed": [
+            "Mencionar os 5 produtos principais",
             "Breve descrição de cada produto"
-          ]
+          ],
+          "points_missed": []
         },
-        "overall_correct": false,
-        "overall_justification": "A resposta lista corretamente os cinco produtos da empresa com base no contexto, mas falha em incluir as breves descrições de cada um conforme exigido nos pontos-chave esperados.",
-        "latency_seconds": 1.633
+        "overall_correct": true,
+        "overall_justification": "A resposta gerada listou corretamente todos os cinco produtos da empresa com base no contexto, cobrindo todos os pontos-chave esperados no gabarito.",
+        "latency_seconds": 1.796
       },
-      "pass": false,
-      "score": 0.5,
-      "diagnosis": "Não foi possível classificar automaticamente - revisar manualmente."
+      "pass": true,
+      "score": 1.0,
+      "diagnosis": null
     },
     {
       "id": "Q02",
@@ -114,7 +113,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "O responsável técnico (Tech Lead) do VendeFácil Estoque é Carlos Mendes, e a gerente de produto (PM / Product Manager) é Ana Souza.",
+        "answer": "O responsável técnico (Tech Lead) do VendeFácil Estoque é Carlos Mendes e a gerente de produto (PM) é Ana Souza.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -125,8 +124,8 @@
             "quotation": "Produto PROD-ESTOQUE: VendeFácil Estoque, categoria Gestão de Inventário e Suprimentos. Módulo de controle avançado de estoque, curva ABC, inventário por coletor de dados, alertas de ruptura e sincronização em tempo real entre filiais. Responsável técnico (Tech Lead): Carlos Mendes. Gerente de produto (PM / Product Manager): Ana Souza."
           }
         ],
-        "reasoning": "A resposta foi obtida diretamente no chunk correspondente ao produto VendeFácil Estoque (PROD-ESTOQUE), que lista explicitamente o responsável técnico e a gerente de produto.",
-        "latency_seconds": 1.675
+        "reasoning": "A resposta foi obtida diretamente no chunk de produto PROD-ESTOQUE, que lista o responsável técnico e a gerente de produto para este módulo.",
+        "latency_seconds": 1.464
       },
       "filters_used": {},
       "sources_recall": 0.5,
@@ -135,7 +134,7 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as informações fornecidas na resposta gerada encontram respaldo literal no contexto fornecido.",
+          "justification": "Todas as informações fornecidas na resposta gerada estão integralmente sustentadas pelo contexto fornecido.",
           "unsupported_claims": []
         },
         "answer_relevance": {
@@ -150,8 +149,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada está totalmente alinhada ao contexto e cobre todos os pontos-chave esperados da referência.",
-        "latency_seconds": 1.816
+        "overall_justification": "A resposta gerada identificou corretamente o Tech Lead e a PM do VendeFácil Estoque com base no contexto, cobrindo todos os pontos-chave esperados.",
+        "latency_seconds": 1.908
       },
       "pass": true,
       "score": 0.85,
@@ -177,7 +176,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "O prazo de arrependimento para novos assinantes solicitarem o reembolso integral de 100% dos valores pagos no cancelamento de planos da VendeFácil é de até 7 dias corridos após a contratação inicial.",
+        "answer": "O prazo de arrependimento para novos assinantes solicitarem o reembolso integral de 100% dos valores pagos no cancelamento de planos da VendeFácil é de até 7 dias corridos após a contratação inicial, conforme previsto pelo Código de Defesa do Consumidor.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -188,8 +187,8 @@
             "quotation": "1.2. Direito de Arrependimento (7 dias): Conforme o Código de Defesa do Consumidor, novos assinantes têm direito\nao reembolso integral de 100% dos valores pagos caso a solicitação seja efetuada em até 7 dias corridos após a\ncontratação inicial."
           }
         ],
-        "reasoning": "A resposta foi obtida na política de reembolso, que estabelece o direito de arrependimento em até 7 dias corridos para novos assinantes.",
-        "latency_seconds": 2.418
+        "reasoning": "A resposta foi obtida diretamente da política de reembolso e cancelamento de contratos, que estabelece o direito de arrependimento em até 7 dias corridos para novos assinantes.",
+        "latency_seconds": 2.585
       },
       "filters_used": {
         "doc_type": "policy",
@@ -201,12 +200,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente sustentadas pelo contexto fornecido.",
+          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente sustentadas pelo contexto fornecido, especificamente na seção de Direito de Arrependimento.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda diretamente a pergunta, informando o prazo exato e a condição de reembolso integral."
+          "justification": "A resposta aborda diretamente e de forma completa a pergunta sobre o prazo de arrependimento e o reembolso integral."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -216,8 +215,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada está perfeitamente alinhada com o contexto e com a referência, cobrindo todos os pontos-chave esperados sem alucinações.",
-        "latency_seconds": 1.492
+        "overall_justification": "A resposta gerada está totalmente alinhada ao contexto e ao gabarito, cobrindo todos os pontos-chave esperados com precisão.",
+        "latency_seconds": 1.844
       },
       "pass": true,
       "score": 0.85,
@@ -242,7 +241,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "A equipe de Engenharia funciona em modelo Remoto First (100% Home Office) com encontros presenciais trimestrais na matriz.",
+        "answer": "A equipe de Engenharia e Produtos funciona em modelo Remoto First (100% Home Office) com encontros presenciais trimestrais na matriz.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -253,8 +252,8 @@
             "quotation": "1.1. **Engenharia e Produtos:** Funciona em modelo **Remoto First (100% Home Office)** com encontros presenciais trimestrais na matriz."
           }
         ],
-        "reasoning": "A política de home office para a equipe de Engenharia está descrita diretamente no documento de políticas internas da empresa, especificando que atuam em modelo Remoto First com encontros presenciais trimestrais.",
-        "latency_seconds": 2.214
+        "reasoning": "A política de home office para a Engenharia está descrita diretamente na seção de políticas internas da empresa, especificando o modelo Remoto First e os encontros trimestrais.",
+        "latency_seconds": 3.028
       },
       "filters_used": {
         "doc_type": "policy",
@@ -271,7 +270,7 @@
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda diretamente e por completo a pergunta sobre a política de home office da equipe de Engenharia."
+          "justification": "A resposta gerada responde de forma direta e completa à pergunta sobre a política de home office da equipe de Engenharia."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -281,8 +280,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada está totalmente correta, baseia-se com precisão no contexto e cobre todos os pontos-chave esperados da referência.",
-        "latency_seconds": 1.293
+        "overall_justification": "A resposta gerada está totalmente alinhada ao contexto e cobre todos os pontos-chave esperados da referência.",
+        "latency_seconds": 1.709
       },
       "pass": true,
       "score": 1.0,
@@ -307,7 +306,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "Foram identificados 4 tickets de suporte abertos por clientes do estado de Minas Gerais (MG) para o módulo de estoque:\n1. TCK-1006 (cliente CUST009, módulo estoque, estado MG, prioridade Média, status Aberto): \"Alerta de estoque mínimo não envia notificação por e-mail.\"\n2. TCK-1001 (cliente CUST001, módulo estoque, estado MG, prioridade Alta, status Aberto): \"Erro na sincronização de estoque entre matriz e filial Savassi.\"\n3. TCK-1002 (cliente CUST002, módulo estoque, estado MG, prioridade Média, status Resolvido): \"Divergência na contagem de lote de medicamentos no inventário cego.\"\n4. TCK-1004 (cliente CUST005, módulo estoque, estado MG, prioridade Alta, status Em Andamento): \"Lentidão ao importar XML de NF-e com mais de 200 itens.\"",
+        "answer": "Com base no contexto, os tickets de suporte abertos por clientes do estado de Minas Gerais (MG) para o módulo de estoque são:\n\n1. **TCK-1006** (cliente CUST009, prioridade Média, status Aberto): \"Alerta de estoque mínimo não envia notificação por e-mail. Mesmo configurando o limite mínimo de queijos artesanais para 10 unidades, quando o saldo cai para 5 o sistema não dispara o e-mail para compras.\"\n2. **TCK-1001** (cliente CUST001, prioridade Alta, status Aberto): \"Erro na sincronização de estoque entre matriz e filial Savassi. As entradas de notas fiscais realizadas no VendeFácil Estoque na Matriz de BH não estão refletindo no saldo da filial Savassi. O saldo fica zerado até reinício do serviço.\"\n3. **TCK-1002** (cliente CUST002, prioridade Média, status Resolvido): \"Divergência na contagem de lote de medicamentos no inventário cego. Ao exportar o arquivo do coletor de dados para o VendeFácil Estoque, os produtos com lote e validade não agrupam corretamente. Resolução: Orientado cliente a atualizar o leiaute do arquivo CSV do coletor conforme documento interno de Sincronização e Inventário v2.1.\"\n4. **TCK-1004** (cliente CUST005, prioridade Alta, status Em Andamento): \"Lentidão ao importar XML de NF-e com mais de 200 itens. A importação de NF-e da ArcelorMittal trava na tela de validação de impostos. Ocorre apenas em compras grandes. Resolução: Analisando log de timeout na consulta de alíquotas de ICMS-ST no serviço de estoque.\"",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -315,26 +314,26 @@
           {
             "filepath": "semi_structured/tickets.jsonl",
             "chunk_id": "ticket-5",
-            "quotation": "Ticket TCK-1006 | cliente CUST009 | estado MG | módulo estoque | prioridade Média | status Aberto | título: Alerta de estoque mínimo não envia notificação por e-mail."
+            "quotation": "Ticket TCK-1006 | cliente CUST009 | estado MG | módulo estoque | prioridade Média | status Aberto | título: Alerta de estoque mínimo não envia notificação por e-mail.\nMesmo configurando o limite mínimo de queijos artesanais para 10 unidades, quando o saldo cai para 5 o sistema não dispara o e-mail para compras."
           },
           {
             "filepath": "semi_structured/tickets.jsonl",
             "chunk_id": "ticket-0",
-            "quotation": "Ticket TCK-1001 | cliente CUST001 | estado MG | módulo estoque | prioridade Alta | status Aberto | título: Erro na sincronização de estoque entre matriz e filial Savassi."
+            "quotation": "Ticket TCK-1001 | cliente CUST001 | estado MG | módulo estoque | prioridade Alta | status Aberto | título: Erro na sincronização de estoque entre matriz e filial Savassi.\nAs entradas de notas fiscais realizadas no VendeFácil Estoque na Matriz de BH não estão refletindo no saldo da filial Savassi. O saldo fica zerado até reinício do serviço."
           },
           {
             "filepath": "semi_structured/tickets.jsonl",
             "chunk_id": "ticket-1",
-            "quotation": "Ticket TCK-1002 | cliente CUST002 | estado MG | módulo estoque | prioridade Média | status Resolvido | título: Divergência na contagem de lote de medicamentos no inventário cego."
+            "quotation": "Ticket TCK-1002 | cliente CUST002 | estado MG | módulo estoque | prioridade Média | status Resolvido | título: Divergência na contagem de lote de medicamentos no inventário cego.\nAo exportar o arquivo do coletor de dados para o VendeFácil Estoque, os produtos com lote e validade não agrupam corretamente.\nResolução: Orientado cliente a atualizar o leiaute do arquivo CSV do coletor conforme documento interno de Sincronização e Inventário v2.1."
           },
           {
             "filepath": "semi_structured/tickets.jsonl",
             "chunk_id": "ticket-3",
-            "quotation": "Ticket TCK-1004 | cliente CUST005 | estado MG | módulo estoque | prioridade Alta | status Em Andamento | título: Lentidão ao importar XML de NF-e com mais de 200 itens."
+            "quotation": "Ticket TCK-1004 | cliente CUST005 | estado MG | módulo estoque | prioridade Alta | status Em Andamento | título: Lentidão ao importar XML de NF-e com mais de 200 itens.\nA importação de NF-e da ArcelorMittal trava na tela de validação de impostos. Ocorre apenas em compras grandes.\nResolução: Analisando log de timeout na consulta de alíquotas de ICMS-ST no serviço de estoque."
           }
         ],
-        "reasoning": "A partir dos tickets fornecidos no contexto, filtramos todos os registros que pertencem ao estado de Minas Gerais (MG) e ao módulo de estoque, encontrando exatamente os tickets TCK-1006, TCK-1001, TCK-1002 e TCK-1004.",
-        "latency_seconds": 3.3
+        "reasoning": "Foram identificados todos os tickets de suporte no contexto que pertencem ao estado de Minas Gerais (MG) e ao módulo de estoque, listando cada um com seus detalhes completos.",
+        "latency_seconds": 4.095
       },
       "filters_used": {
         "doc_type": "ticket",
@@ -346,13 +345,13 @@
       "refusal_check": null,
       "judge": {
         "groundedness": {
-          "score": 3,
-          "justification": "A resposta incluiu o ticket TCK-1006 que está no contexto, mas o contexto indica 4 tickets no total de MG e estoque (TCK-1006, TCK-1001, TCK-1002 e TCK-1004). Contudo, a contagem e a inclusão do TCK-1006 entram em conflito com o gabarito que considerou apenas 3 tickets, embora o contexto forneça os 4 tickets.",
+          "score": 4,
+          "justification": "A resposta gerada lista quatro tickets (TCK-1006, TCK-1001, TCK-1002 e TCK-1004) que estão presentes no contexto com as respectivas informações. Contudo, o contexto recuperado continha na verdade 4 tickets de MG para estoque, mas a resposta gerada incluiu o TCK-1006 que é do contexto, embora o gabarito só esperasse 3.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta identifica adequadamente os tickets de suporte do estado de Minas Gerais para o módulo de estoque com base no contexto fornecido."
+          "justification": "A resposta aborda diretamente a pergunta identificando os tickets de suporte abertos por clientes de MG para o módulo de estoque."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -362,8 +361,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada utilizou corretamente o contexto para listar os tickets do estado de MG para o módulo de estoque, abrangendo todos os pontos-chave solicitados.",
-        "latency_seconds": 1.777
+        "overall_justification": "A resposta gerada identificou corretamente os tickets do estado de MG para o módulo de estoque presentes no contexto (incluindo inclusive um extra correto que estava nos chunks fornecidos).",
+        "latency_seconds": 1.758
       },
       "pass": true,
       "score": 1.0,
@@ -389,7 +388,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "Foram registrados sete chamados com prioridade 'Crítica' no sistema: \n1. TCK-1057 (cliente CUST092, módulo pay, 'PIX Dinâmico gera QR Code porém o caixa não recebe a confirmação - Mundo da da Cruz Eireli');\n2. TCK-1038 (cliente CUST182, módulo pdv, 'Gaveta de dinheiro automática não abre após pagamento em dinheiro - Empório Marques Comercial');\n3. TCK-1067 (cliente CUST051, módulo pay, 'Maquininha Pinpad exibe tela azul e mensagem 'Tamper Detected' - Atacado da Paz Comercial');\n4. TCK-1015 (cliente CUST085, módulo ecommerce, 'Erro 500 ao tentar finalizar compra via checkout com cartão de crédito - Rede Cardoso Comercial');\n5. TCK-1035 (cliente CUST114, módulo ecommerce, 'Erro 500 ao tentar finalizar compra via checkout com cartão de crédito - Casa do da Mata Ltda');\n6. TCK-1027 (cliente CUST173, módulo pay, 'Maquininha Pinpad exibe tela azul e mensagem 'Tamper Detected' - Distribuidora Casa Grande Me');\n7. TCK-1005 (cliente CUST008, módulo pay, 'Transação de TEF aprovada na maquininha porém não finaliza venda no PDV').\n\nO SLA de solução para o nível de prioridade Crítica é de até 2 horas (para planos Pro/Enterprise), sendo o tempo máximo de primeira resposta de 15 minutos.",
+        "answer": "Foram registrados no sistema os seguintes chamados com prioridade 'Crítica':\n- TCK-1057 (cliente CUST092, módulo pay, estado RJ, status Em Andamento): PIX Dinâmico gera QR Code porém o caixa não recebe a confirmação - Mundo da da Cruz Eireli.\n- TCK-1038 (cliente CUST182, módulo pdv, estado BA, status Aberto): Gaveta de dinheiro automática não abre após pagamento em dinheiro - Empório Marques Comercial.\n- TCK-1067 (cliente CUST051, módulo pay, estado RS, status Em Andamento): Maquininha Pinpad exibe tela azul e mensagem 'Tamper Detected' - Atacado da Paz Comercial.\n- TCK-1015 (cliente CUST085, módulo ecommerce, estado ES, status Em Andamento): Erro 500 ao tentar finalizar compra via checkout com cartão de crédito - Rede Cardoso Comercial.\n- TCK-1035 (cliente CUST114, módulo ecommerce, estado PE, status Aberto): Erro 500 ao tentar finalizar compra via checkout com cartão de crédito - Casa do da Mata Ltda.\n- TCK-1027 (cliente CUST173, módulo pay, estado PE, status Resolvido): Maquininha Pinpad exibe tela azul e mensagem 'Tamper Detected' - Distribuidora Casa Grande Me.\n- TCK-1005 (cliente CUST008, módulo pay, estado SP, status Resolvido): Transação de TEF aprovada na maquininha porém não finaliza venda no PDV.\n\nO SLA de solução para chamados de prioridade Crítica é de até 2 horas (para planos Pro/Enterprise).",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -435,8 +434,8 @@
             "quotation": "Resumo em texto do SLA de atendimento a chamados de suporte: para chamados de prioridade Crítica (sistema PDV fora do ar em todos os caixas, paralisação total de vendas ou queda do TEF Pay sem contingência), o tempo máximo de primeira resposta é de 15 minutos e o tempo máximo de solução é de 2 horas (planos Pro/Enterprise)."
           }
         ],
-        "reasoning": "A resposta lista todos os 7 tickets de prioridade Crítica encontrados no contexto de tickets e informa o SLA de solução correspondente obtido na política de atendimento.",
-        "latency_seconds": 4.758
+        "reasoning": "A resposta identifica todos os tickets com prioridade Crítica no contexto e o SLA correspondente na política de atendimento.",
+        "latency_seconds": 4.91
       },
       "filters_used": {
         "doc_type": "ticket",
@@ -448,25 +447,25 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente apoiadas pelos trechos de contexto fornecidos, que listam vários tickets com prioridade Crítica e as políticas de SLA.",
+          "justification": "Todas as afirmações feitas na resposta gerada sobre os chamados e o SLA de solução estão plenamente sustentadas pelos chunks de tickets e de políticas de SLA fornecidos no contexto.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda perfeitamente todos os pontos solicitados na pergunta, listando os chamados críticos encontrados no contexto e informando o SLA de solução correspondente."
+          "justification": "A resposta aborda diretamente quais chamados possuem prioridade crítica com base nos dados recuperados e informa corretamente o SLA de solução."
         },
         "key_points_coverage": {
           "points_hit": [
-            "SLA de resposta: 15 minutos",
+            "Identificar TCK-1005",
             "SLA de solução: 2 horas"
           ],
           "points_missed": [
-            "Identificar TCK-1005"
+            "SLA de resposta: 15 minutos"
           ]
         },
         "overall_correct": false,
-        "overall_justification": "Apesar de o modelo ter listado corretamente múltiplos tickets críticos presentes no contexto e o SLA correto, ele falhou em identificar especificamente o TCK-1005 como o esperado pela referência ou a abrangência correta do gabarito para a identificação do ticket.",
-        "latency_seconds": 2.197
+        "overall_justification": "A resposta gerada listou corretamente o SLA de solução e diversos tickets críticos presentes no contexto, mas omitiu o ponto-chave referente ao SLA de resposta (15 minutos) e incluiu outros tickets que também estavam no contexto, divergindo do gabarito que focava especificamente em um escopo menor ou em um subconjunto de dados.",
+        "latency_seconds": 1.726
       },
       "pass": false,
       "score": 0.5,
@@ -491,7 +490,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "Foram encontrados os seguintes registros de erro e aviso (logs) para o cliente 'CUST008' (Auto Peças Central) no serviço de pagamento (pay):\n\n1. Timestamp: 2026-02-14 10:04:12 | Nível: ERROR | Serviço: vendefacil-pay | Módulo: pay | Evento: TEF_TIMEOUT | Código de erro: PAY-504 | Mensagem: Timeout waiting response from Pinpad IP 192.168.1.105 on port 6090. Transaction aborted by local agent.\n2. Timestamp: 2026-02-14 10:04:15 | Nível: WARN | Serviço: vendefacil-pay | Módulo: pay | Evento: TEF_RETRY_FAILED | Código de erro: PAY-502 | Mensagem: Retry 1/3 failed. Connection refused by Windows Firewall host AutoPecas-Caixa01.",
+        "answer": "Foram encontrados os seguintes registros de erro e aviso (logs) para o cliente CUST008 (Auto Peças Central) no serviço de pagamento (pay): \n1. Timestamp: 2026-02-14 10:04:12, Nível: ERROR, Serviço: vendefacil-pay, Módulo: pay, Evento: TEF_TIMEOUT, Código de Erro: PAY-504, Mensagem: Timeout waiting response from Pinpad IP 192.168.1.105 on port 6090. Transaction aborted by local agent.\n2. Timestamp: 2026-02-14 10:04:15, Nível: WARN, Serviço: vendefacil-pay, Módulo: pay, Evento: TEF_RETRY_FAILED, Código de Erro: PAY-502, Mensagem: Retry 1/3 failed. Connection refused by Windows Firewall host AutoPecas-Caixa01.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -507,8 +506,8 @@
             "quotation": "timestamp: 2026-02-14 10:04:15 | level: WARN | service: vendefacil-pay | module: pay | customer_id: CUST008 | event: TEF_RETRY_FAILED | error_code: PAY-502 | message: Retry 1/3 failed. Connection refused by Windows Firewall host AutoPecas-Caixa01."
           }
         ],
-        "reasoning": "A partir do contexto fornecido, foram identificados os logs dos chunks log-284 e log-285 que correspondem ao cliente CUST008 e ao serviço de pagamento (módulo pay), incluindo tanto o nível ERROR quanto o nível WARN correlato.",
-        "latency_seconds": 2.684
+        "reasoning": "A pergunta solicita listar os logs de erro registrados para o cliente CUST008 no serviço de pagamento (pay). A partir do contexto, identificamos dois logs relevantes no módulo 'pay' para o customer_id CUST008, um de nível ERROR e um de nível WARN correlato, atendendo à instrução de incluir registros correlatos do mesmo evento.",
+        "latency_seconds": 2.46
       },
       "filters_used": {
         "doc_type": "log",
@@ -521,12 +520,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as informações apresentadas na resposta gerada estão integralmente sustentadas pelos logs fornecidos no contexto.",
+          "justification": "Todas as informações fornecidas na resposta gerada estão integralmente sustentadas pelos dados do contexto recuperado.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta lista detalhadamente os registros de log solicitados para o cliente CUST008 no serviço de pagamento."
+          "justification": "A resposta gerada lista perfeitamente e detalhadamente os logs solicitados para o cliente CUST008 no serviço de pagamento."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -536,8 +535,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada cobre todos os pontos-chave esperados e está totalmente embasada pelo contexto recuperado.",
-        "latency_seconds": 1.703
+        "overall_justification": "A resposta gerada está completa, precisa, totalmente embasada pelo contexto e cobre todos os pontos-chave esperados.",
+        "latency_seconds": 1.263
       },
       "pass": true,
       "score": 1.0,
@@ -565,7 +564,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "Sobre o caso de falha de sincronização do cliente Supermercado Boa Compra (Cliente CUST001 / MG), constam as seguintes informações:\n\n- Foi aberto o ticket TCK-1001 com o título \"Erro na sincronização de estoque entre matriz e filial Savassi\", reportando que as entradas de notas fiscais realizadas no VendeFácil Estoque na Matriz de BH não estão refletindo no saldo da filial Savassi, ficando o saldo zerado até o reinício do serviço.\n- Num e-mail enviado pela gerência do Supermercado Boa Compra em 10 de Fevereiro de 2026, é relatado que os lançamentos de entrada de mercadorias no centro de distribuição da Matriz levam horas para atualizar o saldo na filial Savassi, ocasionando vendas duplicadas de produtos sem estoque físico, e solicitou-se a presença física ou apoio do Tech Lead de Estoque (Carlos Mendes) para resolver o lock na base de dados.\n- Conforme registros de Customer Success, o time realizará check-in semanal com o cliente Supermercado Boa Compra até a homologação da v3.5, havendo também a criação de uma fila de suporte dedicada para clientes do segmento alimentício e hortifrúti durante os horários de pico (sextas e sábados).",
+        "answer": "Sobre o caso do Supermercado Boa Compra (Cliente CUST001 / MG), constam as seguintes informações nos registros da empresa:\n- **Ticket TCK-1001 e E-mail:** Foi relatado um problema grave de sincronização de estoque entre a Matriz no Centro de BH e a Filial Savassi. Diferente do previsto na documentação, as entradas de notas fiscais realizadas no centro de distribuição da Matriz levam horas para atualizar o saldo na filial Savassi, fazendo com que o saldo fique zerado até o reinício do serviço e ocasionando vendas duplicadas de produtos sem estoque físico.\n- **Solicitações de Apoio:** A gerência solicitou a presença física ou o apoio do Tech Lead de Estoque, Carlos Mendes, para resolver o lock na base de dados.\n- **Reunião de Roadmap de Produto (Janeiro/2026):** O cliente e outros do segmento alimentício relataram gargalos de concorrência, e ficou definido que Carlos Mendes apresentaria uma proposta de reformulação do mecanismo de locking no banco do VendeFácil Estoque até 30/01.\n- **Customer Success e Retenção (Fevereiro/2026):** O time de Customer Success realizará check-ins semanais com o cliente Supermercado Boa Compra até a homologação da versão v3.5, além da criação de uma fila de suporte dedicada para supermercados e hortifrútis nos horários de pico (sextas e sábados).",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -581,46 +580,52 @@
             "quotation": "Ticket TCK-1001 | cliente CUST001 | estado MG | módulo estoque | prioridade Alta | status Aberto | título: Erro na sincronização de estoque entre matriz e filial Savassi.\nAs entradas de notas fiscais realizadas no VendeFácil Estoque na Matriz de BH não estão refletindo no saldo da filial Savassi. O saldo fica zerado até reinício do serviço."
           },
           {
+            "filepath": "unstructured/meetings/2026-01-product_roadmap.md",
+            "chunk_id": "md-2026-01-product_roadmap.md-1-0",
+            "quotation": "2. **Melhorias na Sincronização de Estoque:**\n- O cliente Supermercado Boa Compra e outros do segmento alimentício relataram gargalos de concorrência.\n- Carlos Mendes apresentará uma proposta de reformulação do mecanismo de *locking* no banco do VendeFácil Estoque até 30/01."
+          },
+          {
             "filepath": "unstructured/meetings/2026-02-customer_success_retention_plan.md",
             "chunk_id": "md-2026-02-customer_success_retention_plan.md-1-0",
             "quotation": "1. **Atendimento Prioritário para Supermercados:** Criação de fila de suporte dedicada para clientes do segmento alimentício e hortifruti durante os horários de pico (sextas e sábados).\n2. **Acompanhamento Semanal de Sync de Estoque:** O time de Customer Success realizará check-in semanal com o cliente Supermercado Boa Compra até a homologação da v3.5."
           }
         ],
-        "reasoning": "A resposta compila as informações dos tickets, e-mails e atas de reuniões relacionados ao Supermercado Boa Compra e sua falha de sincronização.",
-        "latency_seconds": 3.784
+        "reasoning": "A resposta compila de forma detalhada e exata todas as ocorrências, tickets, e-mails, atas de reuniões e planos de CS referentes ao cliente Supermercado Boa Compra e sua falha de sincronização de estoque, utilizando exclusivamente os trechos encontrados no contexto.",
+        "latency_seconds": 5.749
       },
       "filters_used": {
         "doc_type": "ticket",
         "customer_id": "CUST001"
       },
-      "sources_recall": 0.5,
-      "context_relevance": 0.5,
+      "sources_recall": 0.75,
+      "context_relevance": 0.75,
       "refusal_check": null,
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão totalmente sustentadas pelos trechos recuperados no contexto (e-mail, ticket e ata de CS).",
+          "justification": "Todas as afirmações feitas na resposta gerada encontram suporte literal no contexto fornecido.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda detalhadamente a pergunta sobre o cliente Supermercado Boa Compra utilizando as informações disponíveis no contexto recuperado."
+          "justification": "A resposta aborda detalhadamente as informações contidas nos e-mails, tickets e reuniões sobre o Supermercado Boa Compra."
         },
         "key_points_coverage": {
           "points_hit": [
-            "Conectar e-mail customer_001 com ticket TCK-1001"
+            "Conectar e-mail customer_001 com ticket TCK-1001",
+            "Relacionar com as atas de reunião de Jan/2026"
           ],
           "points_missed": [
-            "Relacionar com as atas de reunião de Jan/2026 e Mar/2026",
+            "Relacionar com as atas de reunião de Mar/2026",
             "Mencionar o risco de cancelamento do contrato Enterprise"
           ]
         },
         "overall_correct": false,
-        "overall_justification": "Embora a resposta esteja perfeitamente fundamentada no contexto recuperado, ela deixou de abranger pontos-chave importantes que estavam na referência (atas de reunião específicas e risco de cancelamento), devido a limitações do contexto recuperado fornecido.",
-        "latency_seconds": 1.763
+        "overall_justification": "A resposta gerada é rica em detalhes com base no contexto, mas deixou de cobrir pontos cruciais da referência como a reunião de Mar/2026 e o risco de cancelamento do contrato Enterprise.",
+        "latency_seconds": 1.998
       },
       "pass": false,
-      "score": 0.35,
+      "score": 0.425,
       "diagnosis": "Citação (Etapa 3): resposta correta, mas cita fonte incompleta ou parcialmente errada."
     },
     {
@@ -644,7 +649,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "Sim, a cliente Ótica Visão Clara tem direito ao reembolso integral de 100% do valor pago. De acordo com a Política de Reembolso e Cancelamento de Contratos da VendeFácil, novos assinantes têm direito ao reembolso integral de 100% dos valores pagos caso a solicitação seja efetuada em até 7 dias corridos após a contratação inicial (Direito de Arrependimento). Como o plano foi contratado há 5 dias, no dia 15 de janeiro de 2026, e a solicitação foi enviada dentro desse prazo, a cliente cumpre os requisitos para o reembolso.",
+        "answer": "Sim, a cliente Ótica Visão Clara tem direito ao reembolso integral de 100% do valor pago. De acordo com a política de reembolso da empresa, novos assinantes têm direito ao reembolso integral caso a solicitação seja efetuada em até 7 dias corridos após a contratação inicial. No caso da Ótica Visão Clara, a contratação ocorreu no dia 15 de janeiro de 2026 e a solicitação foi feita 5 dias depois, em 20 de janeiro de 2026, estando dentro do prazo estipulado.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -660,8 +665,8 @@
             "quotation": "1.2. Direito de Arrependimento (7 dias): Conforme o Código de Defesa do Consumidor, novos assinantes têm direito ao reembolso integral de 100% dos valores pagos caso a solicitação seja efetuada em até 7 dias corridos após a contratação inicial."
           }
         ],
-        "reasoning": "A política de reembolso da empresa garante 100% de reembolso em até 7 dias corridos da contratação inicial. O e-mail da cliente mostra que a contratação ocorreu em 15 de janeiro de 2026 e o pedido foi feito em 20 de janeiro de 2026, totalizando 5 dias, o que se enquadra na regra.",
-        "latency_seconds": 2.646
+        "reasoning": "A partir do e-mail enviado pela cliente e da política de reembolso da VendeFácil, verifica-se que a solicitação ocorreu dentro do prazo de 7 dias corridos estabelecido para o direito de arrependimento.",
+        "latency_seconds": 2.871
       },
       "filters_used": {
         "doc_type": "policy",
@@ -674,12 +679,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão perfeitamente sustentadas pelo contexto recuperado, desde o prazo de 5 dias até a política de reembolso de 7 dias.",
+          "justification": "Todas as afirmações feitas na resposta gerada são totalmente sustentadas pelo contexto fornecido, incluindo as datas de contratação e solicitação, bem como a regra da política de reembolso.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta gerada aborda diretamente a pergunta, analisando o e-mail e confirmando o direito ao reembolso com base na política."
+          "justification": "A resposta gerada aborda diretamente a pergunta, analisando o e-mail e determinando corretamente o direito ao reembolso com base na política."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -690,8 +695,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada cobriu perfeitamente todos os pontos-chave esperados, baseando-se corretamente no contexto fornecido e coincidindo com a resposta de referência.",
-        "latency_seconds": 1.645
+        "overall_justification": "A resposta gerada está perfeitamente alinhada com a referência, cobrindo todos os pontos-chave esperados e baseando-se corretamente no contexto.",
+        "latency_seconds": 1.678
       },
       "pass": true,
       "score": 0.9,
@@ -728,7 +733,7 @@
           }
         ],
         "reasoning": "Resolvida por consulta estruturada direta sobre customers.csv (agregação MAX/MIN não passa por busca vetorial nem por LLM, para garantir exatidão numérica).",
-        "latency_seconds": 0.033
+        "latency_seconds": 0.075
       },
       "filters_used": {
         "doc_type": "customer",
@@ -740,14 +745,14 @@
       "judge": {
         "groundedness": {
           "score": 1,
-          "justification": "A resposta gerada utilizou um contexto incorreto (CUST1214) que não continha os dados reais corretos para responder à pergunta baseada no gabarito, embora a afirmação venha do chunk recuperado, ela está totalmente desalinhada com a verdade do gabarito.",
+          "justification": "A resposta gerada utilizou informações do contexto recuperado incorreto (CUST1214), portanto as afirmações não encontram respaldo no contexto real fornecido para a resposta correta.",
           "unsupported_claims": [
             "O cliente com maior MRR no estado de SP é Lojas Rocha Ltda (CUST1214), com MRR de R$ 3487.22, cujo produto principal é VendeFácil Estoque."
           ]
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta gerada aborda diretamente a pergunta feita, informando o cliente com maior MRR em SP e o produto principal, embora incorreta em relação ao gabarito."
+          "justification": "A resposta gerada aborda diretamente a pergunta feita, identificando um cliente, seu MRR e seu produto em São Paulo, embora tenha falhado na acurácia devido a falhas na recuperação."
         },
         "key_points_coverage": {
           "points_hit": [],
@@ -758,8 +763,8 @@
           ]
         },
         "overall_correct": false,
-        "overall_justification": "A resposta gerada falhou em identificar o cliente correto conforme a referência devido a uma falha na recuperação ou processamento do contexto, errando o cliente, o MRR e o produto.",
-        "latency_seconds": 1.733
+        "overall_justification": "A resposta gerada está incorreta porque baseou-se em um cliente errado devido a limitações de recuperação de contexto, falhando em todos os pontos-chave esperados no gabarito.",
+        "latency_seconds": 2.287
       },
       "pass": false,
       "score": 0.5,
@@ -786,7 +791,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "O erro 'Timeout de confirmação TEF' (Erro PAY-504) no cliente Auto Peças Central é causado pelo bloqueio do firewall local na porta TCP 6090, o que impede que o PDV finalize a venda mesmo após o pagamento ser aprovado na maquininha Pinpad. O procedimento técnico de solução consiste em adicionar uma regra de exceção no Windows Firewall do computador do caixa para permitir conexões de entrada na porta TCP 6090.",
+        "answer": "No cliente Auto Peças Central, a mensagem 'Timeout de confirmação TEF' ocorre devido ao bloqueio do firewall local na porta TCP 6090, o qual impede que o agente TEF local escute as solicitações e finalizes a venda no PDV, embora a transação seja aprovada na maquininha. O procedimento técnico de solução consiste em adicionar uma regra de exceção no Windows Firewall para permitir conexões de entrada na porta TCP 6090.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -799,16 +804,16 @@
           {
             "filepath": "unstructured/documentation/pay/tef_e_maquininhas.md",
             "chunk_id": "md-tef_e_maquininhas.md-1-0",
-            "quotation": "Caso a porta 6090 esteja bloqueada, o pagamento será aprovado na maquininha pelo adquirente, mas o PDV registrará erro de Timeout de confirmação TEF (Erro PAY-504) e a venda não será finalizada no caixa."
+            "quotation": "Para o correto funcionamento da maquininha Pinpad acoplada ao computador do caixa:\n- O agente TEF local escuta solicitações na porta **TCP 6090**.\n- **Regra de Firewall Importante:** O firewall do sistema operacional (Windows Firewall ou iptables) no computador do caixa **deve permitir conexões de entrada na porta TCP 6090**.\n- Caso a porta 6090 esteja bloqueada, o pagamento será aprovado na maquininha pelo adquirente, mas o PDV registrará erro de **Timeout de confirmação TEF (Erro PAY-504)** e a venda não será finalizada no caixa."
           },
           {
             "filepath": "unstructured/emails/customer_003_duvida_tef_firewall.txt",
             "chunk_id": "email-customer_003_duvida_tef_firewall.txt-0",
-            "quotation": "De: gerencia@autopecascentral.com.br\nPara: suporte@vendefacil.com.br\nData: 16 de Fevereiro de 2026 11:20\nAssunto: Re: Solução Ticket TCK-1005 - Firewall e Porta 6090 Auto Peças Central\n\nPrezada equipe do Suporte,\n\nGostaríamos de agradecer o atendimento rápido do coordenador Diego Alves na resolução do chamado TCK-1005 sobre o bloqueio da porta TCP 6090 no Windows Firewall da nossa loja em Ribeirão Preto."
+            "quotation": "Assunto: Re: Solução Ticket TCK-1005 - Firewall e Porta 6090 Auto Peças Central\n\nPrezada equipe do Suporte,\n\nGostaríamos de agradecer o atendimento rápido do coordenador Diego Alves na resolução do chamado TCK-1005 sobre o bloqueio da porta TCP 6090 no Windows Firewall da nossa loja em Ribeirão Preto.\n\nApós adicionarmos a regra de exceção no caixa 01, as vendas voltaram a ser aprovadas sem o erro de timeout TEF. Gostaríamos de agendar a mesma validação para os caixas 02 e 03."
           }
         ],
-        "reasoning": "A partir do ticket TCK-1005 e do e-mail do cliente Auto Peças Central, identificou-se que o problema ocorreu devido ao bloqueio da porta TCP 6090 no firewall. O manual e o ticket detalham que a solução é adicionar uma regra de exceção para liberar a porta 6090.",
-        "latency_seconds": 3.33
+        "reasoning": "A resposta foi obtida cruzando as informações do ticket TCK-1005, do manual de TEF e do e-mail do cliente Auto Peças Central, que detalham que o problema é causado pelo bloqueio do firewall local na porta TCP 6090 e que a solução é adicionar uma regra de exceção para permitir essa porta.",
+        "latency_seconds": 3.914
       },
       "filters_used": {
         "module": "pdv",
@@ -820,12 +825,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações na resposta gerada são respaldadas diretamente pelo contexto recuperado, incluindo a causa na porta 6090 e o procedimento de adição de regra de exceção no Windows Firewall.",
+          "justification": "Todas as informações fornecidas na resposta gerada estão integralmente respaldadas pelo contexto recuperado, que menciona tanto a causa (bloqueio na porta TCP 6090) quanto a solução (regra de exceção no Windows Firewall).",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda diretamente a causa da mensagem de erro e descreve o procedimento técnico de solução solicitado na pergunta."
+          "justification": "A resposta gerada aborda de forma direta e completa a pergunta feita, explicando o motivo da mensagem e o procedimento técnico para solucioná-la no cliente especificado."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -836,8 +841,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada cobre todos os pontos-chave esperados com alta precisão e sem alucinações com base no contexto fornecido.",
-        "latency_seconds": 1.584
+        "overall_justification": "A resposta gerada está perfeitamente alinhada com a referência e o contexto, cobrindo todos os pontos-chave exigidos e sem conter nenhuma alucinação.",
+        "latency_seconds": 2.363
       },
       "pass": true,
       "score": 0.9,
@@ -862,7 +867,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "As decisões aprovadas na reunião de retrospectiva do incidente de queda do TEF foram:\n1. Release de Correção v2.8.2: Publicar patch emergencial para fechar sockets ociosos no agente local do PDV (Responsável: Igor Oliveira - Concluído).\n2. Documentação de Firewall: Atualizar expressamente o manual do VendeFácil Pay destacando a obrigatoriedade de liberação da porta TCP 6090 nos firewalls locais dos clientes (Responsável: Diego Alves - Concluído).\n3. Módulo de Diagnóstico Automático: Desenvolver no VendeFácil PDV um botão de \"Testar Conexão TEF e Porta 6090\" para acelerar o suporte técnico (Responsável: Beatriz Lima - Entrega em 25/02).",
+        "answer": "As decisões aprovadas na reunião de retrospectiva do incidente de queda do TEF foram:\n1. **Release de Correção v2.8.2:** Publicar patch emergencial para fechar sockets ociosos no agente local do PDV (Responsável: Igor Oliveira - Concluído).\n2. **Documentação de Firewall:** Atualizar expressamente o manual do VendeFácil Pay destacando a obrigatoriedade de liberação da porta TCP 6090 nos firewalls locais dos clientes (Responsável: Diego Alves - Concluído).\n3. **Módulo de Diagnóstico Automático:** Desenvolver no VendeFácil PDV um botão de \"Testar Conexão TEF e Porta 6090\" para acelerar o suporte técnico (Responsável: Beatriz Lima - Entrega em 25/02).",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -873,8 +878,8 @@
             "quotation": "1. **Release de Correção v2.8.2:** Publicar patch emergencial para fechar sockets ociosos no agente local do PDV. (Responsável: Igor Oliveira - Concluído).\n2. **Documentação de Firewall:** Atualizar expressamente o manual do VendeFácil Pay destacando a **obrigatoriedade de liberação da porta TCP 6090** nos firewalls locais dos clientes. (Responsável: Diego Alves - Concluído).\n3. **Módulo de Diagnóstico Automático:** Desenvolver no VendeFácil PDV um botão de \"Testar Conexão TEF e Porta 6090\" para acelerar o suporte técnico. (Responsável: Beatriz Lima - Entrega em 25/02)."
           }
         ],
-        "reasoning": "A resposta foi obtida diretamente no chunk de ata correspondente à retrospectiva do incidente de engenharia de fevereiro de 2026, listando todas as decisões aprovadas e seus respectivos responsáveis e status.",
-        "latency_seconds": 2.934
+        "reasoning": "A resposta foi obtida diretamente da ata da reunião de retrospectiva de engenharia, que lista todas as decisões e ações aprovadas para o incidente ocorrido em Fevereiro.",
+        "latency_seconds": 3.102
       },
       "filters_used": {
         "doc_type": "ata",
@@ -886,12 +891,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente sustentadas pelas informações presentes no contexto recuperado.",
+          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente sustentadas pelas informações contidas no contexto recuperado.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda diretamente a pergunta, listando todas as decisões aprovadas na reunião de retrospectiva de forma clara e completa."
+          "justification": "A resposta gerada aborda de forma completa e direta a pergunta sobre as decisões aprovadas na reunião de retrospectiva."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -902,8 +907,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada está perfeitamente alinhada com o contexto e com a resposta de referência, cobrindo todos os pontos-chave esperados sem nenhuma alucinação.",
-        "latency_seconds": 1.487
+        "overall_justification": "A resposta gerada cobre todos os pontos exigidos, está totalmente baseada no contexto e corresponde perfeitamente ao gabarito.",
+        "latency_seconds": 1.876
       },
       "pass": true,
       "score": 1.0,
@@ -928,7 +933,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "Quando ocorrer o erro 'Conflict during inventory sync' (STK-409) entre lojas no módulo VendeFácil Estoque, o procedimento de resolução é o seguinte:\n1. Verifique no menu Configurações -> Rede -> Status da Sincronização se há pacotes pendentes na fila local.\n2. Clique em \"Forçar Reconciliação de Estoque\".\n3. Caso o saldo permaneça divergente por mais de 15 minutos, reinicie o serviço vendefacil-estoque-agent no servidor local da loja ou force um sync cego via comando no terminal.",
+        "answer": "Quando ocorrer o erro 'Conflict during inventory sync' (STK-409) entre lojas, o procedimento de resolução consiste em:\n1. Verificar no menu Configurações -> Rede -> Status da Sincronização se há pacotes pendentes na fila local.\n2. Clicar em \"Forçar Reconciliação de Estoque\".\n3. Caso o saldo permaneça divergente por mais de 15 minutos, reinicie o serviço vendefacil-estoque-agent no servidor local da loja ou force um sync cego via comando no terminal.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -936,11 +941,11 @@
           {
             "filepath": "unstructured/documentation/estoque/sincronizacao_estoque.md",
             "chunk_id": "md-sincronizacao_estoque.md-1-0",
-            "quotation": "Em redes com instabilidade de internet ou volumes altos de venda simultânea em múltiplas filiais:\n- Caso ocorra a mensagem **\"Conflict during inventory sync\" (Erro STK-409)**, o motivo é um *table lock* temporário no banco de dados distribuído na tabela `inventory_stock`.\n- **Procedimento de Resolução:**\n1. Verifique no menu `Configurações -> Rede -> Status da Sincronização` se há pacotes pendentes na fila local.\n2. Clique em **\"Forçar Reconciliação de Estoque\"**.\n3. Caso o saldo permaneça divergente por mais de 15 minutos, reinicie o serviço `vendefacil-estoque-agent` no servidor local da loja ou force um sync cego via comando no terminal."
+            "quotation": "- Caso ocorra a mensagem **\"Conflict during inventory sync\" (Erro STK-409)**, o motivo é um *table lock* temporário no banco de dados distribuído na tabela `inventory_stock`.\n- **Procedimento de Resolução:**\n1. Verifique no menu `Configurações -> Rede -> Status da Sincronização` se há pacotes pendentes na fila local.\n2. Clique em **\"Forçar Reconciliação de Estoque\"**.\n3. Caso o saldo permaneça divergente por mais de 15 minutos, reinicie o serviço `vendefacil-estoque-agent` no servidor local da loja ou force um sync cego via comando no terminal."
           }
         ],
-        "reasoning": "A resposta foi obtida diretamente do manual de sincronização de estoque, que detalha o procedimento passo a passo para resolver o erro STK-409 causado por table lock na tabela inventory_stock.",
-        "latency_seconds": 3.309
+        "reasoning": "A resposta foi extraída diretamente do manual de sincronização de estoque, que detalha o procedimento de resolução para o erro STK-409 listando os passos de verificação no menu, clique de reconciliação e ações caso o saldo permaneça divergente.",
+        "latency_seconds": 3.551
       },
       "filters_used": {
         "module": "estoque"
@@ -951,12 +956,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão totalmente sustentadas pelo contexto fornecido.",
+          "justification": "Toda a resposta gerada é baseada diretamente e literalmente no contexto fornecido, sem introduzir informações externas ou alucinações.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta gerada aborda diretamente a pergunta e fornece o passo a passo completo para a resolução do erro mencionado."
+          "justification": "A resposta aborda diretamente a pergunta, detalhando exatamente o procedimento necessário para resolver o erro STK-409 conforme descrito na documentação."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -968,8 +973,8 @@
           ]
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada apresenta o procedimento correto e prático detalhado no contexto, cobrindo os passos principais para a resolução do erro, embora tenha omitido a explicação da causa.",
-        "latency_seconds": 1.616
+        "overall_justification": "A resposta gerada fornece corretamente o passo a passo prático para a resolução do erro STK-409 conforme o contexto, embora tenha omitido a explicação da causa (table lock) que constava nos pontos-chave.",
+        "latency_seconds": 1.919
       },
       "pass": true,
       "score": 1.0,
@@ -994,7 +999,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "A sangria é a retirada de valores do gaveteiro do caixa por medida de segurança quando o limite preestabelecido de numerário (dinheiro) é atingido. Para realizar a operação, siga o passo a passo: 1. No menu principal do PDV, pressione F8 ou clique em Caixa -> Sangria. 2. Informe o valor a ser retirado e o motivo (ex: \"Sangria periódica para cofre\"). 3. Insira a senha do supervisor/gerente do caixa. 4. O PDV emitirá o comprovante de sangria em duas vias. A primeira via deve ser assinada e depositada no gaveteiro.",
+        "answer": "A sangria é a retirada de valores do gaveteiro do caixa por medida de segurança quando o limite preestabelecido de numerário (dinheiro) é atingido. O passo a passo para realizar a operação é o seguinte:\n1. No menu principal do PDV, pressione F8 ou clique em Caixa -> Sangria.\n2. Informe o valor a ser retirado e o motivo (ex: \"Sangria periódica para cofre\").\n3. Insira a senha do supervisor/gerente do caixa.\n4. O PDV emitirá o comprovante de sangria em duas vias. A primeira via deve ser assinada e depositada no gaveteiro.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -1005,8 +1010,8 @@
             "quotation": "A **sangria** é a retirada de valores do gaveteiro do caixa por medida de segurança quando o limite preestabelecido de numerário (dinheiro) é atingido.\n- **Passo a passo para Sangria:**\n1. No menu principal do PDV, pressione `F8` ou clique em `Caixa -> Sangria`.\n2. Informe o valor a ser retirado e o motivo (ex: \"Sangria periódica para cofre\").\n3. Insira a senha do supervisor/gerente do caixa.\n4. O PDV emitirá o comprovante de sangria em duas vias. A primeira via deve ser assinada e depositada no gaveteiro."
           }
         ],
-        "reasoning": "A resposta foi construída utilizando diretamente as informações do manual do PDV sobre a definição e o passo a passo da operação de sangria.",
-        "latency_seconds": 3.272
+        "reasoning": "A resposta foi obtida diretamente no manual do PDV, que define o conceito de sangria e detalha todos os passos necessários para realizar a operação no sistema VendeFácil PDV.",
+        "latency_seconds": 2.911
       },
       "filters_used": {
         "module": "pdv"
@@ -1017,12 +1022,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente respaldadas pelo contexto recuperado.",
+          "justification": "Todas as afirmações presentes na resposta gerada estão totalmente respaldadas pelo contexto fornecido.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda perfeitamente a pergunta, fornecendo a definição e o passo a passo completo da operação de sangria."
+          "justification": "A resposta aborda diretamente a pergunta explicando o conceito de sangria e detalhando o passo a passo completo da operação no PDV."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -1033,8 +1038,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada cobre todos os pontos-chave esperados, baseia-se estritamente no contexto e responde de forma completa à pergunta.",
-        "latency_seconds": 1.809
+        "overall_justification": "A resposta gerada está completa, perfeitamente alinhada com o contexto e cobre todos os pontos-chave esperados da referência.",
+        "latency_seconds": 1.506
       },
       "pass": true,
       "score": 1.0,
@@ -1065,7 +1070,7 @@
         "refusal_reason": "lgpd",
         "sources_used": [],
         "reasoning": "Recusa aplicada antes da chamada ao LLM, com base na política de LGPD / disponibilidade de evidência (ver lgpd_policy.py).",
-        "latency_seconds": 0.853
+        "latency_seconds": 0.87
       },
       "filters_used": null,
       "sources_recall": null,
@@ -1108,7 +1113,7 @@
         "refusal_reason": "fora_de_escopo",
         "sources_used": [],
         "reasoning": "Recusa aplicada antes da chamada ao LLM, com base na política de LGPD / disponibilidade de evidência (ver lgpd_policy.py).",
-        "latency_seconds": 0.042
+        "latency_seconds": 0.065
       },
       "filters_used": null,
       "sources_recall": null,
@@ -1147,7 +1152,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "A VendeFácil Tecnologia atua como Operadora de dados pessoais de consumidores dos clientes varejistas e Controladora dos dados de seus próprios colaboradores e contratantes. Além disso, a política estabelece que é estritamente proibido o armazenamento de dados sensíveis (biometria, dados de saúde, religião) ou dados financeiros confidenciais (número de cartão de crédito completo, CVV, senhas de clientes) em logs de aplicação, tickets de suporte ou arquivos de texto simples.",
+        "answer": "A VendeFácil Tecnologia atua como Operadora de dados pessoais de consumidores dos clientes varejistas. Além disso, a política estabelece que é estritamente proibido o armazenamento de dados sensíveis (como biometria, dados de saúde e religião) ou dados financeiros confidenciais (número de cartão de crédito completo, CVV e senhas de clientes) em logs de aplicação, tickets de suporte ou arquivos de texto simples.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -1158,8 +1163,8 @@
             "quotation": "1. Diretrizes da LGPD (Lei Geral de Proteção de Dados - Lei 13.709/2018)\n1.1. A VendeFácil Tecnologia atua como Operadora de dados pessoais de consumidores dos nossos clientes\nvarejistas e Controladora dos dados de seus próprios colaboradores e contratantes.\n1.2. Tratamento de Dados Sensíveis: É estritamente proibido o armazenamento de dados sensíveis (biometria,\ndados de saúde, religião) ou dados financeiros confidenciais (número de cartão de crédito completo, CVV, senhas de\nclientes) em logs de aplicação, tickets de suporte ou arquivos de texto simples."
           }
         ],
-        "reasoning": "A resposta foi extraída diretamente do documento de política de segurança e LGPD da VendeFácil, especificando o papel da empresa em relação aos dados dos consumidores dos lojistas e as proibições quanto ao armazenamento de dados sensíveis ou financeiros.",
-        "latency_seconds": 3.103
+        "reasoning": "A resposta foi construída a partir da política de LGPD da VendeFácil, que define o papel da empresa como Operadora em relação aos dados dos consumidores dos lojistas e proíbe o armazenamento de dados sensíveis e financeiros confidenciais em logs, tickets ou arquivos de texto simples.",
+        "latency_seconds": 3.161
       },
       "filters_used": {
         "doc_type": "policy",
@@ -1171,12 +1176,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente apoiadas pelo texto do contexto recuperado.",
+          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente sustentadas pelas informações contidas no contexto recuperado.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 4,
-          "justification": "A resposta explica o papel da VendeFácil como Operadora e detalha as proibições de armazenamento de dados sensíveis e financeiros conforme a LGPD."
+          "justification": "A resposta aborda o papel da VendeFácil como operadora e as vedações de armazenamento de dados sensíveis e financeiros conforme a LGPD, respondendo satisfatoriamente à pergunta."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -1188,8 +1193,8 @@
           ]
         },
         "overall_correct": false,
-        "overall_justification": "A resposta gerada é precisa quanto aos pontos mencionados no contexto, mas deixou de cobrir um ponto-chave esperado importante que estava na referência (mencionar o DPO Gabriel Ramos).",
-        "latency_seconds": 1.844
+        "overall_justification": "A resposta gerada está correta em relação ao contexto fornecido, mas omitiu um ponto-chave importante da referência, que é a menção ao DPO Gabriel Ramos.",
+        "latency_seconds": 1.98
       },
       "pass": false,
       "score": 0.35,
@@ -1213,7 +1218,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "No VendeFácil Loja, é possível configurar uma margem de segurança de estoque (Safety Stock) — por exemplo, mantendo 2 unidades reservadas apenas para a loja física — com o objetivo de evitar a venda duplicada de itens que possuem baixo giro.",
+        "answer": "No VendeFácil Loja, é possível configurar uma margem de segurança de estoque (Safety Stock) para definir uma margem (por exemplo, manter 2 unidades reservadas apenas para a loja física) com o objetivo de evitar a venda duplicada de itens com baixo giro.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -1224,8 +1229,8 @@
             "quotation": "- **Regra de Segurança de Estoque (Safety Stock):** É possível configurar uma margem de segurança de estoque (ex: manter 2 unidades reservadas apenas para a loja física) para evitar venda duplicada de itens com baixo giro."
           }
         ],
-        "reasoning": "A resposta foi obtida diretamente no manual de integração de catálogo do VendeFácil Loja, que descreve a regra de segurança de estoque.",
-        "latency_seconds": 2.598
+        "reasoning": "A resposta foi extraída diretamente da documentação do VendeFácil Loja, que descreve a regra de segurança de estoque.",
+        "latency_seconds": 2.82
       },
       "filters_used": {
         "doc_type": "store",
@@ -1237,12 +1242,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações na resposta gerada estão estritamente apoiadas no contexto fornecido sobre a Regra de Segurança de Estoque.",
+          "justification": "Todas as afirmações feitas na resposta gerada estão totalmente sustentadas pelo texto do contexto, sem nenhuma alucinação.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta gerada aborda direta e completamente a pergunta sobre a regra de Safety Stock no VendeFácil Loja."
+          "justification": "A resposta aborda diretamente a pergunta, explicando o conceito e a utilidade da regra de Safety Stock conforme descrito no contexto."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -1252,8 +1257,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada está totalmente fundamentada no contexto, responde perfeitamente à pergunta e cobre todos os pontos-chave esperados da referência.",
-        "latency_seconds": 1.326
+        "overall_justification": "A resposta gerada cobre perfeitamente os pontos-chave esperados e está totalmente embasada pelo contexto recuperado, sendo equivalente à resposta de referência.",
+        "latency_seconds": 1.717
       },
       "pass": true,
       "score": 1.0,
@@ -1277,24 +1282,24 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "As filiais cadastradas no sistema para o cliente 'Supermercado Boa Compra' em Belo Horizonte são a Filial Savassi (Loja STR-002, localizada em Belo Horizonte/MG, com 5 terminais PDV) e a Filial Matriz - Centro BH (Loja STR-001, localizada em Belo Horizonte/MG, com 8 terminais PDV).",
+        "answer": "As filiais cadastradas no sistema para o cliente Supermercado Boa Compra em Belo Horizonte são:\n- Filial Matriz - Centro BH (Loja STR-001): localizada em Belo Horizonte/MG, com 8 terminais PDV e módulos ativos VendeFácil PDV, VendeFácil Estoque e VendeFácil Pay.\n- Filial Savassi (Loja STR-002): localizada em Belo Horizonte/MG, com 5 terminais PDV e módulos ativos VendeFácil PDV, VendeFácil Estoque e VendeFácil Pay.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
         "sources_used": [
           {
             "filepath": "structured/stores.json",
-            "chunk_id": "store-1",
-            "quotation": "Loja STR-002: Filial Savassi, da rede Supermercado Boa Compra (cliente CUST001), localizada em Belo Horizonte/MG, com 5 terminais PDV. Módulos ativos: VendeFácil PDV, VendeFácil Estoque, VendeFácil Pay."
+            "chunk_id": "store-0",
+            "quotation": "Loja STR-001: Filial Matriz - Centro BH, da rede Supermercado Boa Compra (cliente CUST001), localizada em Belo Horizonte/MG, com 8 terminais PDV. Módulos ativos: VendeFácil PDV, VendeFácil Estoque, VendeFácil Pay."
           },
           {
             "filepath": "structured/stores.json",
-            "chunk_id": "store-0",
-            "quotation": "Loja STR-001: Filial Matriz - Centro BH, da rede Supermercado Boa Compra (cliente CUST001), localizada em Belo Horizonte/MG, com 8 terminais PDV. Módulos ativos: VendeFácil PDV, VendeFácil Estoque, VendeFácil Pay."
+            "chunk_id": "store-1",
+            "quotation": "Loja STR-002: Filial Savassi, da rede Supermercado Boa Compra (cliente CUST001), localizada em Belo Horizonte/MG, com 5 terminais PDV. Módulos ativos: VendeFácil PDV, VendeFácil Estoque, VendeFácil Pay."
           }
         ],
-        "reasoning": "A partir do contexto, existem dois registros de lojas associados ao cliente CUST001 (Supermercado Boa Compra) em Belo Horizonte: a Loja STR-001 (Filial Matriz - Centro BH) e a Loja STR-002 (Filial Savassi).",
-        "latency_seconds": 2.312
+        "reasoning": "A partir do contexto de lojas (stores.json), foram identificadas as duas unidades da rede Supermercado Boa Compra localizadas em Belo Horizonte: a matriz (STR-001) e a filial Savassi (STR-002), cujos detalhes de terminais e módulos ativos constam nos chunks correspondentes.",
+        "latency_seconds": 2.584
       },
       "filters_used": {
         "customer_id": "CUST001"
@@ -1305,12 +1310,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as informações fornecidas na resposta gerada encontram respaldo literal no contexto recuperado, sem qualquer alucinação.",
+          "justification": "Todas as informações presentes na resposta gerada, incluindo nomes das filiais, códigos das lojas, localização, número de terminais PDV e módulos ativos, encontram-se explicitamente sustentadas pelo contexto recuperado.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda diretamente a pergunta, listando as filiais do cliente Supermercado Boa Compra em Belo Horizonte com seus respectivos detalhes."
+          "justification": "A resposta gerada aborda diretamente e de forma completa a pergunta feita, listando as filiais cadastradas para o cliente especificado em Belo Horizonte com todos os detalhes relevantes."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -1320,8 +1325,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada é totalmente correta, cobre todos os pontos-chave esperados e está perfeitamente embasada pelo contexto.",
-        "latency_seconds": 1.286
+        "overall_justification": "A resposta gerada está totalmente alinhada ao contexto e à resposta de referência, cobrindo com precisão todos os pontos-chave esperados.",
+        "latency_seconds": 1.7
       },
       "pass": true,
       "score": 1.0,
@@ -1349,7 +1354,7 @@
         "refusal_reason": "fora_de_escopo",
         "sources_used": [],
         "reasoning": "Recusa aplicada antes da chamada ao LLM, com base na política de LGPD / disponibilidade de evidência (ver lgpd_policy.py).",
-        "latency_seconds": 0.06
+        "latency_seconds": 0.077
       },
       "filters_used": null,
       "sources_recall": null,
@@ -1387,7 +1392,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "A política da VendeFácil para o reembolso de cursos, certificações e treinamentos pagos para colaboradores prevê as seguintes regras:\n- Reembolso de até 80% dos custos com cursos pagos, workshops, bootcamps e exames de certificação profissional, desde que alinhados ao PDI (Plano de Desenvolvimento Individual) do colaborador.\n- O limite é de R$ 2.500,00 ao ano por colaborador.\n- A solicitação exige aprovação prévia do gestor direto e do RH no sistema HR.\n- O reembolso é efetuado mediante apresentação de nota fiscal e certificado de conclusão do curso.",
+        "answer": "A política da VendeFácil para reembolso de cursos, certificações e treinamentos pagos para colaboradores estabelece que:\n- A empresa reembolsa até 80% dos custos com cursos pagos, workshops, bootcamps e exames de certificação profissional, desde que alinhados ao PDI (Plano de Desenvolvimento Individual) do colaborador.\n- O limite é de R$ 2.500,00 ao ano por colaborador.\n- A solicitação exige aprovação prévia do gestor direto e do RH no sistema HR.\n- O reembolso é efetuado mediante apresentação de nota fiscal e certificado de conclusão do curso.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -1398,8 +1403,8 @@
             "quotation": "3.1. A VendeFácil reembolsa até **80%** dos custos com cursos pagos, workshops, bootcamps e exames de certificação profissional, desde que alinhados ao PDI (Plano de Desenvolvimento Individual) do colaborador.\n3.2. O limite é de **R$ 2.500,00 ao ano por colaborador**.\n3.3. A solicitação exige aprovação prévia do gestor direto e do RH no sistema HR.\n3.4. O reembolso é efetuado mediante apresentação de nota fiscal e certificado de conclusão do curso."
           }
         ],
-        "reasoning": "A resposta foi obtida diretamente da política de benefícios da VendeFácil, que detalha todas as condições, limites e procedimentos necessários para o reembolso de treinamentos e cursos de colaboradores.",
-        "latency_seconds": 2.971
+        "reasoning": "A resposta foi obtida diretamente do documento de políticas de benefícios e viagens, que detalha todas as regras, limites, porcentagens e requisitos para o reembolso de cursos e treinamentos de colaboradores.",
+        "latency_seconds": 3.591
       },
       "filters_used": {
         "doc_type": "policy",
@@ -1411,12 +1416,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente sustentadas pelo contexto fornecido.",
+          "justification": "Todas as afirmações feitas na resposta gerada estão totalmente sustentadas pelo contexto fornecido.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta gerada aborda detalhadamente e de forma direta a política de reembolso da empresa para cursos e treinamentos."
+          "justification": "A resposta aborda diretamente a pergunta, detalhando todas as regras e limites da política de reembolso."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -1427,8 +1432,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada está perfeitamente alinhada com o contexto e a referência, cobrindo todos os pontos-chave de forma precisa e sem alucinações.",
-        "latency_seconds": 1.519
+        "overall_justification": "A resposta gerada cobre com exatidão todos os pontos da política e do gabarito, sem alucinações e com total fidelidade ao contexto.",
+        "latency_seconds": 1.704
       },
       "pass": true,
       "score": 1.0,
@@ -1454,7 +1459,7 @@
       "expected_refusal": false,
       "error": null,
       "generation": {
-        "answer": "De acordo com a Política de Home Office, as exigências de conectividade e disponibilidade estabelecidas são as seguintes:\n\n1. O colaborador deve possuir conexão de internet estável e de alta velocidade, com um mínimo recomendado de 100 Mbps de download e 20 Mbps de upload.\n2. É exigida disponibilidade plena durante o horário acordado em contrato, utilizando os canais oficiais (Slack/Teams e e-mail).\n3. O colaborador deve registrar o ponto eletrônico normalmente e participar pontualmente das reuniões com a câmera aberta.",
+        "answer": "De acordo com a Política de Home Office, as exigências de conectividade e disponibilidade são as seguintes:\n- O colaborador deve possuir conexão de internet estável e de alta velocidade, com o mínimo recomendado de 100 Mbps de download e 20 Mbps de upload.\n- É exigida disponibilidade plena durante o horário acordado em contrato, utilizando os canais oficiais (Slack/Teams e e-mail).\n- O colaborador deve registrar o ponto eletrônico normalmente e participar pontualmente das reuniões com a câmera aberta.",
         "confidence_level": "alta",
         "is_refusal": false,
         "refusal_reason": null,
@@ -1465,8 +1470,8 @@
             "quotation": "3.1. O colaborador deve possuir conexão de internet estável e de alta velocidade, com mínimo recomendado de **100 Mbps de download e 20 Mbps de upload**.\n3.2. É exigida disponibilidade plena durante o horário acordado em contrato, através dos canais oficiais (Slack/Teams e e-mail).\n3.3. O colaborador deve registrar o ponto eletrônico normalmente e participar pontualmente das reuniões com a câmera aberta."
           }
         ],
-        "reasoning": "A resposta foi obtida diretamente da seção 3 da Política de Home Office, que detalha os requisitos de conexão de internet, disponibilidade nos horários acordados e regras para registro de ponto e participação em reuniões.",
-        "latency_seconds": 3.01
+        "reasoning": "A resposta foi extraída diretamente da seção 3 da Política de Home Office, que detalha os requisitos de conexão de internet e disponibilidade para os colaboradores em regime remoto.",
+        "latency_seconds": 3.346
       },
       "filters_used": {
         "doc_type": "policy",
@@ -1478,12 +1483,12 @@
       "judge": {
         "groundedness": {
           "score": 5,
-          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente respaldadas pelo contexto fornecido, sem nenhuma alucinação.",
+          "justification": "Todas as afirmações feitas na resposta gerada estão integralmente sustentadas pelo contexto fornecido.",
           "unsupported_claims": []
         },
         "answer_relevance": {
           "score": 5,
-          "justification": "A resposta aborda de forma completa e direta as exigências de conectividade e disponibilidade solicitadas na pergunta."
+          "justification": "A resposta aborda diretamente e de forma completa as exigências de conectividade e disponibilidade estabelecidas na política."
         },
         "key_points_coverage": {
           "points_hit": [
@@ -1494,8 +1499,8 @@
           "points_missed": []
         },
         "overall_correct": true,
-        "overall_justification": "A resposta gerada cobre com exatidão todos os pontos exigidos pela política de home office e está perfeitamente alinhada com a referência.",
-        "latency_seconds": 1.509
+        "overall_justification": "A resposta gerada cobre com precisão todos os pontos-chave esperados e está totalmente alinhada com o contexto e a resposta de referência.",
+        "latency_seconds": 2.184
       },
       "pass": true,
       "score": 1.0,
@@ -1526,7 +1531,7 @@
         "refusal_reason": "lgpd",
         "sources_used": [],
         "reasoning": "Recusa aplicada antes da chamada ao LLM, com base na política de LGPD / disponibilidade de evidência (ver lgpd_policy.py).",
-        "latency_seconds": 0.62
+        "latency_seconds": 0.627
       },
       "filters_used": null,
       "sources_recall": null,
@@ -1569,7 +1574,7 @@
         "refusal_reason": "lgpd",
         "sources_used": [],
         "reasoning": "Recusa aplicada antes da chamada ao LLM, com base na política de LGPD / disponibilidade de evidência (ver lgpd_policy.py).",
-        "latency_seconds": 0.543
+        "latency_seconds": 0.594
       },
       "filters_used": null,
       "sources_recall": null,
