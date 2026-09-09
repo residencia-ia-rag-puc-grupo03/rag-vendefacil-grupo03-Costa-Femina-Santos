@@ -37,13 +37,42 @@ from hybrid_search import HybridRetriever
 HOST = "127.0.0.1"
 PORT_CANDIDATES = [8000, 8001, 8002, 8003, 8004, 0]  # 0 = deixa o SO escolher
 
-# Mesmas perguntas de exemplo do demo.py (uma por categoria do benchmark).
+_BENCHMARK_FILE = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "..", "benchmark", "questions_and_ground_truth.json",
+)
+
+# Fallback caso o arquivo de benchmark não esteja presente (uma por categoria).
 PERGUNTAS_DE_EXEMPLO = [
     "Qual é a política de reembolso da empresa?",
     "Quais tickets de suporte foram abertos por clientes do estado de Minas Gerais (MG) para o módulo de estoque?",
     "Qual o salário do funcionário com maior remuneração?",
     "Quem descobriu o Brasil?",
 ]
+
+
+def _load_benchmark_questions() -> list:
+    """Carrega as 24 perguntas do benchmark (id, categoria, texto) para a lista
+    de exemplos da interface. Se o arquivo não existir, cai no fallback acima."""
+    try:
+        with open(_BENCHMARK_FILE, encoding="utf-8") as f:
+            data = json.load(f)
+        items = [
+            {
+                "id": q.get("id", f"Q{i + 1:02d}"),
+                "category": q.get("category", ""),
+                "question": q["question"],
+            }
+            for i, q in enumerate(data.get("questions", []))
+        ]
+        if items:
+            return items
+    except (OSError, json.JSONDecodeError, KeyError):
+        pass
+    return [{"id": "", "category": "", "question": p} for p in PERGUNTAS_DE_EXEMPLO]
+
+
+QUESTIONS = _load_benchmark_questions()
 
 REFUSAL_LABELS = {
     "lgpd": "protegido por LGPD",
@@ -119,54 +148,93 @@ PAGE = """<!doctype html>
   .quote{color:#555;border-left:2px solid #cfcfc8;padding-left:10px;margin:4px 0 0}
   @media (prefers-color-scheme:dark){.quote{color:#aaa}}
   .err{color:#a11c1c}
+  .chip .cat{color:#6b7280;font-size:.78rem}
+  details.exs{margin:10px 0 4px}
+  details.exs summary{cursor:pointer;font-size:.9rem;color:#6b7280}
+  .qhead{font-weight:600;font-size:.85rem;margin-bottom:2px}
+  #runall{background:transparent;border:1px solid #8a3b12;color:#8a3b12;margin-left:8px}
+  .prog{font-size:.85rem;color:#6b7280;margin:10px 0}
 </style></head><body><div class="wrap">
 <h1>VendeFácil &mdash; Assistente RAG <span style="font-weight:400;color:#6b7280">(demo)</span></h1>
 <p class="sub">Mesmo pipeline do benchmark. Cada pergunta faz uma chamada ao LLM.</p>
 <textarea id="q" placeholder="Digite uma pergunta sobre a VendeFácil..."></textarea>
+<details class="exs" open><summary>Perguntas do benchmark (<span id="nq"></span>) &mdash; clique para preencher</summary>
 <div class="chips" id="chips"></div>
+</details>
 <button id="go">Perguntar</button>
+<button id="runall">&#9654; Rodar todas (gasta cota)</button>
+<div class="prog" id="prog"></div>
 <div id="out"></div>
 <script>
-const EXAMPLES = __EXAMPLES__;
+const QUESTIONS = __QUESTIONS__;
 const chips = document.getElementById("chips");
-EXAMPLES.forEach(function(ex){
+document.getElementById("nq").textContent = QUESTIONS.length;
+QUESTIONS.forEach(function(item){
   const b = document.createElement("button");
-  b.className = "chip"; b.textContent = ex;
-  b.onclick = function(){ document.getElementById("q").value = ex; };
+  b.className = "chip";
+  b.title = item.question;
+  b.innerHTML = (item.id ? '<b>'+esc(item.id)+'</b> ' : '')
+    + (item.category ? '<span class="cat">'+esc(item.category)+'</span>' : esc(item.question.slice(0,40)+'...'));
+  b.onclick = function(){ document.getElementById("q").value = item.question; document.getElementById("q").focus(); };
   chips.appendChild(b);
 });
 const go = document.getElementById("go");
+const runall = document.getElementById("runall");
 const out = document.getElementById("out");
+const prog = document.getElementById("prog");
 function esc(s){ const d=document.createElement("div"); d.textContent=s==null?"":s; return d.innerHTML; }
+
+function renderAnswer(data){
+  if(data.error){ return '<div class="card err">Erro: '+esc(data.error)+'</div>'; }
+  if(data.is_refusal){
+    return '<div class="card refusal"><div class="meta">RECUSADO &mdash; '
+      + esc(data.refusal_label) + '</div>' + esc(data.answer) + '</div>';
+  }
+  let srcHtml = '';
+  (data.sources||[]).forEach(function(s){
+    srcHtml += '<div class="src">&#8226; <code>'+esc(s.filepath)+'</code> '
+      + '<span class="meta">chunk_id='+esc(s.chunk_id)+'</span>'
+      + '<div class="quote">'+esc(s.quotation)+'</div></div>';
+  });
+  return '<div class="card ok"><div class="meta">confiança: '+esc(data.confidence_level)
+    +' &nbsp;&middot;&nbsp; '+ (data.sources||[]).length +' fonte(s)</div>'
+    + esc(data.answer) + srcHtml + '</div>';
+}
+
+async function ask(question){
+  const r = await fetch("/ask", {method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({question})});
+  return await r.json();
+}
+
 go.onclick = async function(){
   const question = document.getElementById("q").value.trim();
   if(!question) return;
-  go.disabled = true; out.innerHTML = '<div class="card"><div class="meta">processando...</div></div>';
-  try{
-    const r = await fetch("/ask", {method:"POST", headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({question})});
-    const data = await r.json();
-    if(data.error){ out.innerHTML = '<div class="card err">Erro: '+esc(data.error)+'</div>'; return; }
-    if(data.is_refusal){
-      out.innerHTML = '<div class="card refusal"><div class="meta">RECUSADO &mdash; '
-        + esc(data.refusal_label) + '</div>' + esc(data.answer) + '</div>';
-      return;
-    }
-    let srcHtml = '';
-    (data.sources||[]).forEach(function(s){
-      srcHtml += '<div class="src">&#8226; <code>'+esc(s.filepath)+'</code> '
-        + '<span class="meta">chunk_id='+esc(s.chunk_id)+'</span>'
-        + '<div class="quote">'+esc(s.quotation)+'</div></div>';
-    });
-    out.innerHTML = '<div class="card ok"><div class="meta">confiança: '+esc(data.confidence_level)
-      +' &nbsp;&middot;&nbsp; '+ (data.sources||[]).length +' fonte(s)</div>'
-      + esc(data.answer) + srcHtml + '</div>';
-  }catch(e){
-    out.innerHTML = '<div class="card err">Falha na requisição: '+esc(String(e))+'</div>';
-  }finally{
-    go.disabled = false;
-  }
+  go.disabled = true; runall.disabled = true;
+  out.innerHTML = '<div class="card"><div class="meta">processando...</div></div>';
+  try{ out.innerHTML = renderAnswer(await ask(question)); }
+  catch(e){ out.innerHTML = '<div class="card err">Falha na requisição: '+esc(String(e))+'</div>'; }
+  finally{ go.disabled = false; runall.disabled = false; }
 };
+
+runall.onclick = async function(){
+  if(!confirm("Isso roda as "+QUESTIONS.length+" perguntas do benchmark, uma chamada ao LLM cada. Continuar?")) return;
+  go.disabled = true; runall.disabled = true; out.innerHTML = "";
+  for(let i=0;i<QUESTIONS.length;i++){
+    const item = QUESTIONS[i];
+    prog.textContent = "Rodando "+(i+1)+"/"+QUESTIONS.length+" ("+(item.id||"")+")...";
+    let data;
+    try{ data = await ask(item.question); }
+    catch(e){ data = {error:String(e)}; }
+    const block = document.createElement("div");
+    block.innerHTML = '<div class="qhead">'+esc(item.id)+' &middot; '+esc(item.category)+'</div>'
+      + '<div class="meta">'+esc(item.question)+'</div>' + renderAnswer(data);
+    out.appendChild(block);
+  }
+  prog.textContent = "Concluído: "+QUESTIONS.length+" perguntas.";
+  go.disabled = false; runall.disabled = false;
+};
+
 document.getElementById("q").addEventListener("keydown", function(e){
   if((e.ctrlKey||e.metaKey) && e.key === "Enter") go.click();
 });
@@ -187,7 +255,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path not in ("/", "/index.html"):
             self._send(404, b"not found", "text/plain; charset=utf-8")
             return
-        page = PAGE.replace("__EXAMPLES__", json.dumps(PERGUNTAS_DE_EXEMPLO, ensure_ascii=False))
+        page = PAGE.replace("__QUESTIONS__", json.dumps(QUESTIONS, ensure_ascii=False))
         self._send(200, page.encode("utf-8"), "text/html; charset=utf-8")
 
     def do_POST(self):  # noqa: N802
