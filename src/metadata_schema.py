@@ -10,6 +10,7 @@ class ChunkMetadata(BaseModel):
 
 
     customer_id: Optional[str] = None
+    company_name: Optional[str] = None
     state: Optional[str] = None
     module: Optional[str] = None
     priority: Optional[str] = None

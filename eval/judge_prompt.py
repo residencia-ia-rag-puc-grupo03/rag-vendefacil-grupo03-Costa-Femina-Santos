@@ -21,9 +21,9 @@ RESPOSTA DE REFERÊNCIA (gabarito) e uma lista de PONTOS-CHAVE ESPERADOS.
 Avalie em duas frentes:
 
 1) RAG Triad (avalie SOMENTE com base no CONTEXTO e na PERGUNTA/RESPOSTA GERADA -
-   NÃO use a resposta de referência para essas três notas):
-   - context_relevance: o quanto o CONTEXTO recuperado é relevante para responder
-     a PERGUNTA, numa escala de 1 (nada relevante) a 5 (totalmente relevante).
+   NÃO use a resposta de referência para essas notas). Note que "context_relevance"
+   NÃO é avaliada por você - ela é calculada de forma determinística fora deste
+   juiz, comparando os arquivos de origem recuperados com o gabarito:
    - groundedness: o quanto toda afirmação feita na RESPOSTA GERADA está
      sustentada literalmente pelo CONTEXTO (sem alucinação), de 1 (nenhuma
      afirmação sustentada) a 5 (toda afirmação sustentada). Liste em
@@ -43,10 +43,13 @@ Avalie em duas frentes:
    - overall_justification: 1-2 frases explicando o veredito final.
 
 Sua saída deve ser SOMENTE um objeto JSON válido, sem nenhum texto antes ou
-depois, sem markdown, seguindo EXATAMENTE este formato:
+depois, sem markdown, seguindo EXATAMENTE este formato. ATENÇÃO: se você
+citar ou mencionar um trecho do CONTEXTO que contenha aspas duplas dentro
+dele (ex.: "Forçar Reconciliação de Estoque"), você DEVE escapá-las com
+barra invertida (\") nas suas justificativas para manter o JSON válido -
+isso é uma causa comum de JSON quebrado, preste atenção especial nisso:
 
 {
-  "context_relevance": {"score": 1-5, "justification": "..."},
   "groundedness": {"score": 1-5, "justification": "...", "unsupported_claims": ["..."]},
   "answer_relevance": {"score": 1-5, "justification": "..."},
   "key_points_coverage": {"points_hit": ["..."], "points_missed": ["..."]},
@@ -83,7 +86,6 @@ class KeyPointsCoverage(BaseModel):
 
 
 class JudgeResponse(BaseModel):
-    context_relevance: DimensionScore
     groundedness: GroundednessScore
     answer_relevance: DimensionScore
     key_points_coverage: KeyPointsCoverage
@@ -98,6 +100,8 @@ def call_judge(question: str, context_text: str, answer: str, ground_truth_answe
     `generate.generate_structured_response` (reconstrói o prompt original a cada
     tentativa, só anexando o erro de validação anterior).
     """
+    import time
+
     max_retries = max_retries if max_retries is not None else config.MAX_RETRIES
 
     base_prompt = build_judge_user_prompt(question, context_text, answer, ground_truth_answer, key_points)
@@ -112,6 +116,11 @@ def call_judge(question: str, context_text: str, answer: str, ground_truth_answe
             return JudgeResponse.model_validate(data)
         except (json.JSONDecodeError, ValidationError) as error:
             last_error = error
+            # Correção (Etapa 4 - item 20, ajustada): ver comentário
+            # equivalente em generate.generate_structured_response - pausa
+            # progressiva (não fixa) quando a resposta vem vazia.
+            if not raw:
+                time.sleep(3 * attempt)
             user_prompt = (
                 f"{base_prompt}\n\n"
                 f"Sua resposta anterior (tentativa {attempt}) não seguiu o formato "

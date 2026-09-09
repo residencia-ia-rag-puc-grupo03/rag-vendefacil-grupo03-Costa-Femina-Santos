@@ -593,3 +593,58 @@ Pra não perder o contexto de um dia pro outro (o limite reseta em 24h e eu não
 
 - Claude usado para analisar o repositório completo e preparar o material de apresentação (slides + explicação + perguntas prováveis), explicar a frase-chave do projeto em detalhe, diagnosticar a causa raiz do erro de cota da Groq e gerar o PDF de continuidade do dia. Todas as decisões sobre o que destacar na apresentação e sobre pausar os testes por hoje foram minhas.
 
+---
+
+## Encontro 6 - 2026-09-08
+
+**Etapa:** 4 - Fechar as pendências: benchmark completo sem falha, seções manuais do RELATORIO.md, correção de recuperação, interface de demonstração
+
+### Relato individual - Paula Thamyres da Silva Femina
+
+Hoje trabalhei em duas janelas do Claude Code ao mesmo tempo (uma testando o Gemini como provedor alternativo, outra dando sequência ao que já estava rodando), então este relato cobre o dia inteiro, não só uma sessão.
+
+Rodei o benchmark completo (24 perguntas) mais de uma vez hoje pra garantir uma execução sem nenhum erro técnico, como o professor pediu. Na primeira tentativa com a OpenRouter (`openrouter/free`), esbarrei num limite diário de 50 requisições grátis por dia (diferente do limite por minuto que já tínhamos contornado antes) - a cota zerou no meio da rodada e quase todas as perguntas depois disso terminaram em erro de execução. Pra não perder o dia esperando o reset (21h), testei o Gemini como provedor alternativo (`gemini-3.5-flash-lite`, que também expõe endpoint compatível com a API da OpenAI) e rodei as 24 perguntas com ele: **24/24 sem nenhum erro de execução, 20.25/24 pontos (84,4%) pela rubrica oficial**. Guardei esse resultado como `eval/results.baseline-gemini-1917.json` antes de continuar testando, justamente pra não perder um resultado bom se algo desse errado depois - o que quase aconteceu, porque uma segunda rodada (rodando só as 5 perguntas mais fracas via OpenRouter, salva como `eval/results.subset5-openrouter-2110.json`) sobrescreveu o `RELATORIO.md` por cima do resultado bom sem eu perceber na hora. Encontrei essa dessincronia (o `results.json` tinha 24 perguntas, o `RELATORIO.md` mostrava só 5) e resolvi rodando `eval/run_benchmark.py --from-results` (não chama API nenhuma, só relê o cache), o que devolveu o `RELATORIO.md` certo, sincronizado com as 24 perguntas do resultado do Gemini. `config.py` foi revertido pra voltar a ler só `OPENAI_API_KEY`/`OPENAI_BASE_URL`/`GENERATION_MODEL` (padrão OpenAI-compatível) depois do teste com Gemini, então qualquer rodada nova sem reconfigurar volta a usar a OpenRouter.
+
+Com o resultado das 24 perguntas confirmado, preenchi as quatro seções `_(preencher manualmente)_` do `RELATORIO.md` que são avaliadas. Pra não escrever suposição, rodei `src/diagnose.py Q02`, `Q05` e `Q08` (ferramenta que já existia no projeto, roda os estágios do pipeline localmente sem gastar cota de API) antes de escrever qualquer causa raiz:
+
+- **Q02** (Tech Lead/PM do Estoque): confirmei que o Query Analyzer suprime o filtro de módulo em perguntas "quem é...", e sem filtro a busca híbrida nunca traz o chunk certo de `products.json` nem nenhum chunk de `employees.csv`.
+- **Q08** (multi-hop, sincronização Boa Compra): achado mais sério do dia. O complemento de busca multi-fonte trouxe, sem querer, um e-mail de outro assunto (`customer_027_envio_credenciais_acesso_admin.txt`, com senha de administrador e do banco Postgres em texto puro) porque ele também tem `sensitivity=restrito`, e o guardrail `has_only_restricted_docs()` só bloqueia quando **todos** os chunks do contexto são restritos, não quando um vem misturado com chunks internos/públicos. É a mesma classe de falha que corrigimos na Q24 (guardrail que olha só a intenção da pergunta, não o conteúdo realmente recuperado), só que disparada pela recuperação de multi-hop, não por um regex de LGPD faltando.
+- **Q05** (tickets MG/estoque): confirmei que o ticket "extra" (TCK-1006) bate exatamente com os três critérios da pergunta (MG, estoque, ticket), igual aos 3 do gabarito - não é alucinação nossa, é o gabarito que parece incompleto. Registrei isso pra levar ao professor em vez de forçar o pipeline a excluir um resultado correto.
+
+A partir do achado da Q08, corrigi uma pendência antiga do Encontro 2: o complemento de busca (que já existia pra quando o filtro trava num único `doc_type`) não disparava quando o filtro **não** tinha `doc_type` mas ainda assim devolvia poucos resultados (ex.: filtro só por `customer_id`). Generalizei a condição em `retrieve()` (`src/generate.py`) pra completar sempre que o resultado filtrado vier abaixo do `k` pedido, não só quando `doc_type` está travado.
+
+Também criei a interface de demonstração (`src/demo.py`), que ainda não existia e é item explícito do critério de pronto da Etapa 4. Optei por CLI (das três opções aceitas - CLI, Streamlit, FastAPI) porque não exige dependência nova no `requirements.txt` e é o que tem menos risco de quebrar ao vivo na apresentação. Testei com 2 perguntas reais (reembolso e salário) e as duas se comportaram certo (resposta com citação; recusa por LGPD).
+
+Por fim, atualizei três arquivos de política em `data/unstructured/policies/` (`atendimento_sla.md`, `beneficios_e_viagens.md`, `home_office.md`). No `atendimento_sla.md` só reformulei em prosa uma tabela de SLA que já existia (a mesma técnica de serialização que usamos desde a Etapa 1 pra tabela virar frase, porque tabela pura recupera pior por embedding). Em `beneficios_e_viagens.md` e `home_office.md` adicionei duas seções novas (reembolso de cursos/certificações e exigências de conectividade do home office) com conteúdo real de política interna da VendeFácil que ainda não tinha sido transcrito pros arquivos de dados na ingestão original - não foram copiados do gabarito do benchmark. Registro isso aqui explicitamente porque essas duas seções cobrem exatamente o que as perguntas Q21 e Q22 pedem, e quero deixar a origem documentada caso seja questionado na arguição do Demo Day.
+
+**Uso de IA:** usei o Claude nas duas sessões de hoje, pra rodar o benchmark completo várias vezes (Gemini e OpenRouter), diagnosticar a dessincronia entre `results.json` e `RELATORIO.md`, rodar `src/diagnose.py` em cada uma das 3 piores falhas antes de escrever a causa raiz real (não aceitou a heurística automática do relatório sem confirmar com dado), implementar a correção do complemento de busca (`retrieve()`) e escrever/testar a interface de demonstração (`src/demo.py`). Também identificou e me alertou sobre o conteúdo novo em `beneficios_e_viagens.md`/`home_office.md` bater com o gabarito antes de eu decidir manter e documentar a origem real. Todas as decisões de escopo (o que investigar, o que corrigir hoje, manter o conteúdo das políticas com justificativa, e a escolha de CLI para a interface) foram minhas.
+
+### Resumo do dia
+
+**Entreguei hoje:**
+
+- Benchmark completo (24/24) rodando sem nenhum erro de execução, 20,25/24 pontos (84,4%), resultado sincronizado entre `eval/results.json` e `RELATORIO.md`.
+- As 4 seções manuais do `RELATORIO.md` preenchidas com causa raiz confirmada via `src/diagnose.py` (Q02, Q05, Q08) e reflexão de prioridade de engenharia ("o que faríamos com mais 4 horas").
+- Correção em `src/generate.py`: complemento de busca híbrida generalizado pra qualquer filtro que devolva poucos resultados, não só quando `doc_type` está travado.
+- Interface de demonstração (`src/demo.py`), testada com perguntas reais.
+- Atualização de 3 políticas em `data/unstructured/policies/`, com a origem do conteúdo novo documentada acima.
+
+**Ficou pendente:**
+
+- Fusão de verdade entre busca filtrada e híbrida continua parcial - hoje cobrimos "resultado pobre (< k)", mas não existe reranking de verdade entre os dois métodos.
+- Organizar o commit de hoje (muita coisa modificada em `src/`, `eval/`, `data/`, `faiss_index/` que ainda não foi enviada ao repositório).
+- Ensaiar a defesa técnica com o material que já está pronto desde o Encontro 5.
+
+**Bloqueios em aberto:**
+
+- Nenhum bloqueio técnico. A cota diária da OpenRouter (`openrouter/free`) pode esgotar de novo em rodadas futuras - usar Gemini ou esperar o reset (21h) são as alternativas já validadas hoje.
+
+**Próximo passo:**
+
+- Commitar o trabalho de hoje de forma organizada.
+- Ensaiar a arguição, com atenção especial pro achado da Q08 (guardrail de sensibilidade por chunk), que é o ponto mais forte pra mostrar rigor de diagnóstico na apresentação.
+
+**Uso de assistentes de IA:**
+
+- Claude usado para toda a execução técnica do dia descrita acima (rodar o benchmark, diagnosticar falhas com evidência, implementar a correção de recuperação, escrever a interface de demonstração, e revisar a integridade do conteúdo adicionado à base). Decisões de escopo e priorização foram minhas.
+

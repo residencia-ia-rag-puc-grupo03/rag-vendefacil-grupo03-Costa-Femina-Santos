@@ -14,7 +14,7 @@ class SourceEvidence(BaseModel):
     )
     quotation: str = Field(
         ...,
-        max_length=500,
+        max_length=1200,
         description="Trecho literal que sustenta a resposta"
     )
 

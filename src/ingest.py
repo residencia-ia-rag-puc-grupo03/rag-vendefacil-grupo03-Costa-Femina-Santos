@@ -8,6 +8,7 @@ from loaders import (
     load_customers_csv,
     load_employees_csv,
     load_generic_csv,
+    load_system_logs_csv,
     load_products_json,
     load_stores_json,
     load_tickets_jsonl,
@@ -55,8 +56,8 @@ def load_all_documents():
 
     logs_path = os.path.join(semi, "system_logs.csv")
     if os.path.exists(logs_path):
-        docs += load_generic_csv(logs_path, doc_type="log", sensitivity="interno",
-                                  source_label="semi_structured/system_logs.csv")
+        docs += load_system_logs_csv(logs_path, sensitivity="interno",
+                                      source_label="semi_structured/system_logs.csv")
 
     tickets_path = os.path.join(semi, "tickets.jsonl")
     if os.path.exists(tickets_path):

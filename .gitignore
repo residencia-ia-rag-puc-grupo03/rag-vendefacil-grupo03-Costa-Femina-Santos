@@ -2,3 +2,15 @@ venv/
 __pycache__/
 *.pyc
 .env
+
+.claude/
+CLAUDE.md
+docs/
+
+# Backups locais de rodadas do benchmark (comparação entre provedores/tentativas) -
+# não são deliverable, eval/results.json é o resultado oficial da última rodada.
+eval/results.*.json
+!eval/results.json
+
+# Cópia manual do índice FAISS - faiss_index/ já é o artefato versionado.
+faiss_index_backup/

@@ -16,6 +16,39 @@ from metadata_schema import ChunkMetadata
 def _make_id(prefix: str, idx) -> str:
     return f"{prefix}-{idx}"
 
+
+# Correção (Etapa 4 - item 3): customers.csv e stores.json guardavam o nome
+# completo do produto no campo `module` (ex.: "VendeFácil Estoque"), enquanto
+# tickets.jsonl e os manuais usam a chave curta (ex.: "estoque"). Isso fazia
+# o Query Analyzer, em alguns casos, extrair o valor "errado" (o nome
+# completo) e filtrar só por customer/store, excluindo tickets e manuais que
+# usam a chave curta - mesmo already havendo uma correção parcial anterior
+# (Etapa 2) só para tickets. Esta tabela unifica os dois lados para o mesmo
+# padrão, usando só valores que já existem nos dados reais.
+_MODULE_NAME_TO_KEY = {
+    "vendefacil pdv": "pdv",
+    "vendefacil estoque": "estoque",
+    "vendefacil loja": "ecommerce",
+    "vendefacil analytics": "analytics",
+    "vendefacil pay": "pay",
+}
+
+
+def _strip_accents(text: str) -> str:
+    import unicodedata
+    text = unicodedata.normalize("NFKD", text)
+    return "".join(c for c in text if not unicodedata.combining(c))
+
+
+def normalize_module(value: str | None) -> str | None:
+    """Converte nome completo de produto para a chave curta canônica,
+    quando reconhecido. Caso não reconheça, devolve o valor original
+    (sem inventar chave nova)."""
+    if not value or value == "nan":
+        return value
+    key = _strip_accents(value.strip().lower())
+    return _MODULE_NAME_TO_KEY.get(key, value)
+
 def load_customers_csv(path: str) -> list[Document]:
     df = pd.read_csv(path)
     docs = []
@@ -35,8 +68,9 @@ def load_customers_csv(path: str) -> list[Document]:
             sensitivity="interno",
             customer_id=str(row.get("customer_id", "")),
             state=str(row.get("state", "")),
-            module=str(row.get("main_product", "")),
+            module=normalize_module(str(row.get("main_product", ""))),
             status=str(row.get("status", "")),
+            company_name=str(row.get("company_name", "")) or None,
         )
         docs.append(Document(page_content=text, metadata=meta.to_dict()))
     return docs
@@ -58,6 +92,17 @@ def load_employees_csv(path: str) -> list[Document]:
     return docs
 
 def load_generic_csv(path: str, doc_type: str, sensitivity: str, source_label: str) -> list[Document]:
+    """
+    Carrega um CSV genérico (logs, vendas, etc.) para chunks de texto.
+
+    Correção (Etapa 4 - item 2): o arquivo original só extraía `date`/`timestamp`
+    para os metadados, mesmo quando o CSV já tinha colunas reais como
+    `customer_id`, `module`, `state` e `status` (caso de system_logs.csv e
+    sales.csv). Sem isso, o Query Analyzer nunca conseguia filtrar logs/vendas
+    por cliente ou módulo, mesmo que a pergunta pedisse exatamente isso -
+    o dado existia na fonte, só não chegava ao metadado do chunk.
+    Agora extraímos essas colunas quando existem, sem inventar nada.
+    """
     df = pd.read_csv(path)
     docs = []
     for i, row in df.iterrows():
@@ -67,15 +112,35 @@ def load_generic_csv(path: str, doc_type: str, sensitivity: str, source_label: s
             date_value = str(row.get("date"))
         elif "timestamp" in df.columns:
             date_value = str(row.get("timestamp"))
+
         meta = ChunkMetadata(
             source_file=source_label,
             doc_type=doc_type,
             chunk_id=_make_id(doc_type, i),
             sensitivity=sensitivity,
             date=date_value,
+            customer_id=str(row.get("customer_id")) if "customer_id" in df.columns else None,
+            module=normalize_module(str(row.get("module"))) if "module" in df.columns else None,
+            state=str(row.get("state")) if "state" in df.columns else None,
+            status=str(row.get("status")) if "status" in df.columns else None,
         )
         docs.append(Document(page_content=text, metadata=meta.to_dict()))
     return docs
+
+
+def load_system_logs_csv(path: str, sensitivity: str, source_label: str) -> list[Document]:
+    """
+    Carrega system_logs.csv (doc_type="log" fixo).
+
+    Correção (Etapa 4 - item 2): antes só extraía `date`/`timestamp`. O CSV
+    real tem colunas `customer_id`, `module` e `state`/`status` que eram
+    descartadas - sem elas, o Query Analyzer nunca conseguia filtrar logs
+    por cliente/módulo mesmo quando a pergunta pedia exatamente isso.
+    Reaproveita a mesma extração de load_generic_csv, só fixando doc_type.
+    """
+    return load_generic_csv(
+        path, doc_type="log", sensitivity=sensitivity, source_label=source_label
+    )
 
 def load_products_json(path: str) -> list[Document]:
     with open(path, encoding="utf-8") as f:
