@@ -648,3 +648,54 @@ Por fim, atualizei três arquivos de política em `data/unstructured/policies/` 
 
 - Claude usado para toda a execução técnica do dia descrita acima (rodar o benchmark, diagnosticar falhas com evidência, implementar a correção de recuperação, escrever a interface de demonstração, e revisar a integridade do conteúdo adicionado à base). Decisões de escopo e priorização foram minhas.
 
+---
+
+## Encontro 7 - 2026-09-09
+
+**Etapa:** 4 - Diagnóstico estágio a estágio das 5 falhas restantes, correção de duas delas (Q01 e Q08), rodada final do benchmark e fechamento do RELATORIO.md
+
+### Relato individual - Paula Thamyres da Silva Femina
+
+Retomei da rodada de ontem (86,2%, 19 PASS) para atacar as 5 perguntas que ainda falhavam: Q01, Q06, Q08, Q10 e Q17. Comecei rodando `python src/diagnose.py` em cada uma (sem gastar cota - o `diagnose.py` só usa o índice FAISS + BM25 local), para separar falha real de pipeline de ruído de gabarito/juiz.
+
+O diagnóstico mostrou que só a **Q08** é falha real de recuperação. A Q06 recupera 100% certo (os 7 tickets `priority=Crítica` + o `atendimento_sla.md`) e "erra" só porque o `ground_truth_answer` diz "o ticket é o TCK-1005" no singular, sendo que há 7 tickets críticos na base. A Q10 é resolvida pela rota estruturada (`is_customer_mrr_aggregation`), que acha o maior MRR real em SP (CUST1214), mas o gabarito diz CUST008. A Q17 eu conferi extraindo o texto do `seguranca_lgpd.pdf` com `pypdf`: o key point "DPO Gabriel Ramos" que o juiz cobrou **está** no PDF indexado - o Context Relevance aparece como 50% só porque o gabarito lista também o `seguranca_lgpd.md`, que a gente decidiu não indexar por ser quase-duplicata do PDF.
+
+Para a **Q08**, minha primeira hipótese era mexer no `query_analyzer.py` para não travar `doc_type: ticket`. Mas ao checar os metadados das atas do gabarito vi que elas têm `customer_id=None`, então nenhum filtro as traria. O gargalo real é a profundidade do complemento de busca em `retrieve()`. Rodei um script pontual medindo o rank das duas atas na busca híbrida crua: `2026-01-product_roadmap.md` no rank ~14 e `2026-03-sales_enterprise_feedback.md` no rank ~29 - e o `retrieve()` só buscava `k+5=13` candidatos, raso demais. Ajustei o `retrieve()` em `src/generate.py`: quando a pergunta cita 2+ tipos de documento ("e-mails, tickets e reuniões"), o pool passa de `k+5` para `k+16` e o teto de `k+10` para `k+14`. Perguntas de fonte única não mudam (o branch `else` ficou idêntico). Confirmei no `diagnose.py` (sem cota): Q08 Context Relevance 50% → 75%, sem regressão em Q06/Q09.
+
+A **Q01** tinha regredido de PASS 1,00 (baseline) para FAIL 0,50. Comparei a resposta das duas rodadas no `results.json`: no baseline listava "VendeFácil Loja (plataforma de e-commerce omnicanal)"; depois passou a listar "VendeFácil Loja (PROD-LOJA)" - só nome e código. O juiz cobra "breve descrição de cada produto" nos `key_points`. A recuperação sempre foi 100%. Adicionei uma regra no `SYSTEM_PROMPT` de `src/generate.py`: ao enumerar entidades, dar cada item com uma breve descrição do contexto, não só o nome/código.
+
+Rodei o benchmark completo das 24 perguntas em Gemini (`gemini-3.5-flash-lite`): **21,27 / 24 = 88,6%, 20 PASS, 0 erro de execução** (Context Relevance 90,8%, Groundedness 4,74, Answer Relevance 4,95, acurácia de recusa 5/5). A Q01 voltou a PASS 1,00 e a Q08 subiu de 0,35 para 0,42. Reescrevi as 4 seções manuais avaliadas do `RELATORIO.md` (causa raiz real de Q17/Q08/Q06 e "o que faríamos com mais 4 horas") com base nessa rodada. Commitei em dois passos (`6dec87f` = código, `e460c9e` = benchmark + RELATORIO) e fiz o push.
+
+A interface de demonstração já estava pronta desde o Encontro 6 (`src/demo.py` no terminal e `src/webdemo.py` no navegador, as duas só com biblioteca padrão do Python). Falta rodar as 2 perguntas de demo escolhidas na interface antes do Demo Day.
+
+**Uso de IA:** usei o Claude para rodar o `src/diagnose.py` nas 5 falhas e ler o trace estágio por estágio; para escrever o script pontual que mediu o rank das atas da Q08 na busca híbrida; para implementar as duas mudanças em `src/generate.py` (complemento multi-fonte mais fundo e a regra de enumeração no prompt); para comparar a resposta da Q01 entre as duas rodadas no `results.json`; e para reescrever as seções manuais do `RELATORIO.md` a partir dos números reais. Rodei o benchmark e conferi cada resultado por mim. A decisão de parar no diagnóstico do 2º hop de recuperação (registrar como "o que faríamos com +4h" em vez de implementar agora) foi minha.
+
+### Resumo do dia
+
+**Entreguei hoje:**
+
+- Diagnóstico estágio a estágio (sem cota, via `src/diagnose.py`) das 5 perguntas que falhavam, separando falha real (Q08) de gabarito desatualizado (Q06, Q10) e variância de juiz (Q17).
+- `src/generate.py`: complemento de busca multi-fonte mais fundo em `retrieve()` (pool `k+16` / teto `k+14` para perguntas com 2+ tipos de documento) - Q08 Context Relevance 50% → 75%.
+- `src/generate.py`: regra de enumeração-com-descrição no `SYSTEM_PROMPT` - Q01 voltou a PASS 1,00.
+- Rodada final do benchmark: **21,27 / 24 (88,6%), 20 PASS**, 0 erro de execução.
+- `RELATORIO.md`: 4 seções manuais avaliadas reescritas para a rodada final, sem placeholders.
+- Commits `6dec87f` e `e460c9e` + push para o GitHub (branch alinhada com o `origin`).
+
+**Ficou pendente:**
+
+- Rodar as 2 perguntas de demo escolhidas na interface (`src/webdemo.py`) antes do Demo Day.
+- 2º hop de recuperação dirigido para perguntas multi-fonte - é o que falta para fechar a Q08 (com query dirigida, a ata do rank ~29 sobe para o rank 2). Está registrado como "o que faríamos com mais 4 horas" no RELATORIO; não é pré-requisito de entrega.
+- Ensaiar a apresentação de 7 minutos e a arguição.
+
+**Bloqueios em aberto:**
+
+- Nenhum. A cota paga do Gemini resolveu a limitação de TPD que travava rodadas completas.
+
+**Próximo passo:**
+
+- Testar a interface com as perguntas de demo e ensaiar a apresentação, com foco no achado de que a Q02 era falha de ingestão (o chunk certo era recuperado mas não tinha a resposta) e no diagnóstico honesto de que 3 das 4 falhas restantes são gabarito/juiz, não pipeline.
+
+**Uso de assistentes de IA:**
+
+- Claude usado para o diagnóstico das falhas com `src/diagnose.py`, medição do ranking híbrido da Q08, implementação das duas correções em `src/generate.py`, execução do benchmark final e redação das seções manuais do `RELATORIO.md`. Todas as decisões de escopo e a execução/conferência do benchmark foram da Paula.
+
