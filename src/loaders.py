@@ -2,6 +2,8 @@
 import json
 import os
 
+import re
+
 import pandas as pd
 from langchain_core.documents import Document
 from langchain_text_splitters import (
@@ -318,23 +320,62 @@ def load_pdf(path: str, sensitivity: str, source_label: str) -> list[Document]:
         docs.append(Document(page_content=chunk_text, metadata=meta.to_dict()))
     return docs
 
-def load_email_txt(path: str, source_label: str, max_chars: int = 1000) -> list[Document]:
+def load_email_txt(
+    path: str,
+    source_label: str,
+    max_chars: int = 1000
+) -> list[Document]:
+
     with open(path, encoding="utf-8") as f:
         text = f.read().strip()
 
-    if len(text) <= max_chars:
-        chunks = [text]
-    else:
-        splitter = RecursiveCharacterTextSplitter(chunk_size=max_chars, chunk_overlap=100)
-        chunks = splitter.split_text(text)
+    # Primeiro separa o thread em mensagens.
+    # Cada nova mensagem começa por "De:" no início de uma linha.
+    messages = re.split(
+        r"(?=^De:\s*)",
+        text,
+        flags=re.MULTILINE
+    )
+
+    # Remove pedaços vazios
+    messages = [
+        message.strip()
+        for message in messages
+        if message.strip()
+    ]
 
     docs = []
-    for j, chunk_text in enumerate(chunks):
-        meta = ChunkMetadata(
-            source_file=source_label,
-            doc_type="email",
-            chunk_id=_make_id(f"email-{os.path.basename(path)}", j),
-            sensitivity="restrito",
-        )
-        docs.append(Document(page_content=chunk_text, metadata=meta.to_dict()))
+
+    for message_idx, message in enumerate(messages):
+
+        # Só depois de separar as mensagens é que aplicamos
+        # o limite de tamanho.
+        if len(message) <= max_chars:
+            parts = [message]
+        else:
+            splitter = RecursiveCharacterTextSplitter(
+                chunk_size=max_chars,
+                chunk_overlap=100,
+                separators=["\n\n", "\n", ". ", " "]
+            )
+            parts = splitter.split_text(message)
+
+        for part_idx, chunk_text in enumerate(parts):
+            meta = ChunkMetadata(
+                source_file=source_label,
+                doc_type="email",
+                chunk_id=_make_id(
+                    f"email-{os.path.basename(path)}-{message_idx}",
+                    part_idx
+                ),
+                sensitivity="restrito",
+            )
+
+            docs.append(
+                Document(
+                    page_content=chunk_text,
+                    metadata=meta.to_dict()
+                )
+            )
+
     return docs

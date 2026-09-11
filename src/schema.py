@@ -8,13 +8,15 @@ class SourceEvidence(BaseModel):
         ...,
         description="Arquivo de origem do trecho citado"
     )
+
     chunk_id: str = Field(
         ...,
         description="Identificador do chunk recuperado"
     )
+
     quotation: str = Field(
         ...,
-        max_length=1200,
+        max_length=500,
         description="Trecho literal que sustenta a resposta"
     )
 
@@ -44,11 +46,16 @@ class RAGResponse(BaseModel):
     @model_validator(mode="after")
     def validate_consistency(self):
         """
-        Garante a consistência entre recusa,
-        confiança, fontes e motivo.
+        Garante consistência entre:
+        - recusa;
+        - nível de confiança;
+        - fontes;
+        - motivo da recusa.
         """
 
+        # Caso seja uma recusa
         if self.is_refusal:
+
             if self.confidence_level != "recusado":
                 raise ValueError(
                     "Resposta recusada deve ter confidence_level='recusado'."
@@ -64,7 +71,9 @@ class RAGResponse(BaseModel):
                     "Resposta recusada deve informar refusal_reason."
                 )
 
+        # Caso seja uma resposta normal
         else:
+
             if not self.sources_used:
                 raise ValueError(
                     "Resposta não recusada precisa possuir pelo menos uma evidência."
